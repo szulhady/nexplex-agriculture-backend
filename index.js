@@ -430,6 +430,7 @@ app.post('/api/setSchedule/ipah1',(req,res)=>{
   
       //  console.log(row)
       }
+      client.publish('debug/test/database/ipah1', 'updated')
       res.header('Content-Type', 'application/json; charset=utf-8')
       res.send('Sucess')
     });
