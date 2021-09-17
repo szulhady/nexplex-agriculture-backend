@@ -63,7 +63,7 @@ connection.query(q, function (error, row, fields) {
       if (row[i].hour < 10) {
         row[i].hour = "0" + row[i].hour;
       }
-      if(row[i].hour%2 == 0){
+      if(row[i].hour%4 == 0){
 
 
       min.push(row[i].min)
