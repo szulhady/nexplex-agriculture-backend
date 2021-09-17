@@ -449,6 +449,7 @@ app.post('/api/setSchedule/ipah2',(req,res)=>{
   
       //  console.log(row)
       }
+      client.publish('debug/test/database/ipah2', 'updated')
       res.header('Content-Type', 'application/json; charset=utf-8')
       res.send('Sucess')
     });
@@ -467,6 +468,7 @@ app.post('/api/setSchedule/tkpmPagoh',(req,res)=>{
     
         //  console.log(row)
         }
+        client.publish('debug/test/database/tkpmPagoh', 'updated')
         res.header('Content-Type', 'application/json; charset=utf-8')
         res.send('Sucess')
       });
@@ -485,6 +487,7 @@ app.post('/api/setSchedule/tkpmPagoh',(req,res)=>{
       
           //  console.log(row)
           }
+          client.publish('debug/test/database/kongPo', 'updated')
           res.header('Content-Type', 'application/json; charset=utf-8')
           res.send('Sucess')
         });
