@@ -275,7 +275,7 @@ const schedule = require('node-schedule');
 
 app.get('/', (req, res) => {
   client.publish('debug/test/express','Hello World From Express!')
-  res.send('Hello World!')
+  res.send(new Date())
 })
 
 app.get('/api/schedule/ipah1',(req,res)=>{
