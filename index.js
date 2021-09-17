@@ -619,10 +619,10 @@ app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
 
-setInterval(()=>{
-// console.log(new Date())
-getUpdatedDataIpah()
-getUpdatedDataTkpmIpah()
-getUpdatedDataTkpmPagoh()
-getUpdatedDataKongPo()
-},60000)
+// setInterval(()=>{
+// // console.log(new Date())
+// getUpdatedDataIpah()
+// getUpdatedDataTkpmIpah()
+// getUpdatedDataTkpmPagoh()
+// getUpdatedDataKongPo()
+// },60000)
