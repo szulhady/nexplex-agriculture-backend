@@ -128,21 +128,27 @@ const schedule = require('node-schedule');
 
               let sv
               if(blockArray[index]=='1'){
-                sv='13'
+                sv='1'
               }else if(blockArray[index]=='2'){
-                sv='14'
+                sv='2'
               }else if(blockArray[index]=='3'){
-                sv='15'
+                sv='3'
               }else if(blockArray[index]=='1,2' || blockArray[index]=='2,1' ){
-                sv='13,14'
+                sv='12'
               }else if(blockArray[index]=='1,3' || blockArray[index]=='3,1' ){
-                sv='13,15'
+                sv='13'
               }else if(blockArray[index]=='2,3' || blockArray[index]=='3,2' ){
-                sv='14,15'
+                sv='23'
               }else{
-                sv='all'
+                sv='123'
               }
-              client.publish('debug/nexplex/control/tkpm/sv', JSON.stringify({time:`${element}`, block:`${sv}`, duration:`${durationArray[index]}`,'substance':`${subtanceArray[index]}`}))
+              if(subtanceArray[index]=='water'){
+                client.publish('debug2/nexplex/control/tkpmIpah/dripping', `${sv},${durationArray[index]}`)
+              }else{
+                client.publish('debug2/nexplex/control/tkpmIpah/nutrient', `${sv},${durationArray[index]}`)
+              }
+              // nexplex/control/tkpmIpah/dripping
+              // client.publish('debug/nexplex/control/tkpm/sv', JSON.stringify({time:`${element}`, block:`${sv}`, duration:`${durationArray[index]}`,'substance':`${subtanceArray[index]}`}))
             });
           });
           // console.log(timeArray)
@@ -619,10 +625,10 @@ app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
 
-// setInterval(()=>{
-// // console.log(new Date())
-// getUpdatedDataIpah()
-// getUpdatedDataTkpmIpah()
-// getUpdatedDataTkpmPagoh()
-// getUpdatedDataKongPo()
-// },60000)
+setInterval(()=>{
+// console.log(new Date())
+getUpdatedDataIpah()
+getUpdatedDataTkpmIpah()
+getUpdatedDataTkpmPagoh()
+getUpdatedDataKongPo()
+},60000)
