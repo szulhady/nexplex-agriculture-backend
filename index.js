@@ -128,19 +128,48 @@ const schedule = require('node-schedule');
 
               let sv
               if(blockArray[index]=='1'){
-                sv='1'
+                if(subtanceArray[index]=='water'){
+                  sv='1'
+                }else{
+                  sv='4'
+                }
               }else if(blockArray[index]=='2'){
-                sv='2'
+                if(subtanceArray[index]=='water'){
+                  sv='2'
+                }else{
+                  sv='5'
+                }
               }else if(blockArray[index]=='3'){
-                sv='3'
+                if(subtanceArray[index]=='water'){
+                  sv='3'
+                }else{
+                  sv='6'
+                }
               }else if(blockArray[index]=='1,2' || blockArray[index]=='2,1' ){
-                sv='12'
-              }else if(blockArray[index]=='1,3' || blockArray[index]=='3,1' ){
-                sv='13'
+                
+                if(subtanceArray[index]=='water'){
+                  sv='12'
+                }else{
+                  sv='45'
+                }
+              }else if(blockArray[index]=='1,3' || blockArray[index]=='3,1' ){            
+                if(subtanceArray[index]=='water'){
+                  sv='13'
+                }else{
+                  sv='46'
+                }
               }else if(blockArray[index]=='2,3' || blockArray[index]=='3,2' ){
-                sv='23'
+                if(subtanceArray[index]=='water'){
+                  sv='23'
+                }else{
+                  sv='45'
+                }
               }else{
-                sv='123'
+                if(subtanceArray[index]=='water'){
+                  sv='123'
+                }else{
+                  sv='456'
+                }
               }
               if(subtanceArray[index]=='water'){
                 client.publish('debug2/nexplex/control/tkpmIpah/dripping', `${sv},${durationArray[index]}`)
