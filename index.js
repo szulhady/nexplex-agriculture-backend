@@ -683,6 +683,20 @@ app.post('/api/setSchedule/tkpmPagoh',(req,res)=>{
         }
       });
     })
+    app.delete('/api/schedule/ipah1/nutrient',(req,res)=>{
+      dat = [];
+      var q = `DELETE FROM ipah_nutrient_schedule WHERE date = "${req.body.date}"`;
+      // connection.connect();
+      connection.query(q, function (error, row, fields) {
+        if (error) {
+          console.log(error);
+        }
+        if (row) {
+          res.json('deleted')
+
+        }
+      });
+    })
     app.delete('/api/schedule/ipah2',(req,res)=>{
       dat = [];
       var q = `DELETE FROM tkpmipah_schedule WHERE date = "${req.body.date}"`;
