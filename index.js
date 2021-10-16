@@ -352,6 +352,36 @@ app.get('/api/schedule/ipah1',(req,res)=>{
     res.send(ret)
   });
 })
+
+app.get('/api/schedule/ipah1/nutrient',(req,res)=>{
+  dat = [];
+  var q = `SELECT * FROM ipah_nutrient_schedule order by date asc`;
+  // connection.connect();
+  connection.query(q, function (error, row, fields) {
+    if (error) {
+      console.log(error);
+    }
+    if (row) {
+      // console.log(row)
+      for (var i = 0; i < row.length; i++) {
+ 
+        let data = {
+          date:row[i].date,
+          time:row[i].time,
+          duration:row[i].duration,
+        }
+        dat.push(
+          data
+        );
+      }
+      ipah1=dat
+    }
+    ret = JSON.stringify(ipah1)
+    res.header('Content-Type', 'application/json; charset=utf-8')
+    res.send(ret)
+  });
+})
+
 app.get('/api/schedule/ipah2',(req,res)=>{
   dat = [];
   var q = `SELECT * FROM tkpmipah_schedule order by date asc`;
@@ -391,6 +421,37 @@ app.get('/api/schedule/ipah2',(req,res)=>{
     res.send(ret)
   });
 })
+
+app.get('/api/schedule/ipah2/nutrient',(req,res)=>{
+  dat = [];
+  var q = `SELECT * FROM tkpmipah_nutrient_schedule order by date asc`;
+  // connection.connect();
+  connection.query(q, function (error, row, fields) {
+    if (error) {
+      console.log(error);
+    }
+    if (row) {
+
+      for (var i = 0; i < row.length; i++) {
+        // console.log(blockArray)
+        // console.log(data2)
+        let data = {
+          date:row[i].date,
+          time:row[i].time,
+          duration:row[i].duration,
+        }
+        dat.push(
+          data
+        );
+      }
+      ipah1=dat
+    }
+    ret = JSON.stringify(ipah1)
+    res.header('Content-Type', 'application/json; charset=utf-8')
+    res.send(ret)
+  });
+})
+
 app.get('/api/schedule/tkpmPagoh',(req,res)=>{
   dat = [];
   var q = `SELECT * FROM tkpmpagoh_schedule order by date asc`;
@@ -430,6 +491,37 @@ app.get('/api/schedule/tkpmPagoh',(req,res)=>{
     res.send(ret)
   });
 })
+
+app.get('/api/schedule/tkpmPagoh/nutrient',(req,res)=>{
+  dat = [];
+  var q = `SELECT * FROM tkpmpagoh_nutrient_schedule order by date asc`;
+  // connection.connect();
+  connection.query(q, function (error, row, fields) {
+    if (error) {
+      console.log(error);
+    }
+    if (row) {
+
+      for (var i = 0; i < row.length; i++) {
+
+        // console.log(data2)
+        let data = {
+          date:row[i].date,
+          time:row[i].time,
+          duration:row[i].duration,
+        }
+        dat.push(
+          data
+        );
+      }
+      ipah1=dat
+    }
+    ret = JSON.stringify(ipah1)
+    res.header('Content-Type', 'application/json; charset=utf-8')
+    res.send(ret)
+  });
+})
+
 app.get('/api/schedule/kongPo',(req,res)=>{
   dat = [];
   var q = `SELECT * FROM kongpo_schedule order by date asc`;
@@ -453,6 +545,35 @@ app.get('/api/schedule/kongPo',(req,res)=>{
   });
 })
 
+app.get('/api/schedule/kongPo/nutrient',(req,res)=>{
+  dat = [];
+  var q = `SELECT * FROM kongpo_nutrient_schedule order by date asc`;
+  // connection.connect();
+  connection.query(q, function (error, row, fields) {
+    if (error) {
+      console.log(error);
+    }
+    if (row) {
+
+      for (var i = 0; i < row.length; i++) {
+        let data = {
+          date:row[i].date,
+          time:row[i].time,
+          duration:row[i].duration,
+        }
+        dat.push(
+          data
+        );
+      }
+      ipah1=dat
+    }
+    ret = JSON.stringify(ipah1)
+    res.header('Content-Type', 'application/json; charset=utf-8')
+    res.send(ret)
+  });
+})
+
+
 app.post('/api/setSchedule/ipah1',(req,res)=>{
 // console.log(req.body.block)
     // ret = JSON.stringify(ipah1)
@@ -466,6 +587,25 @@ app.post('/api/setSchedule/ipah1',(req,res)=>{
       //  console.log(row)
       }
       client.publish('debug/test/database/ipah1', 'updated')
+      res.header('Content-Type', 'application/json; charset=utf-8')
+      res.send('Sucess')
+    });
+;
+})
+app.post('/api/setSchedule/ipah1/nutrient',(req,res)=>{
+// console.log(req.body.block)
+    // ret = JSON.stringify(ipah1)
+    var q = `INSERT INTO ipah_nutrient_schedule (date,time,duration) VALUES ('${req.body.date}', '${req.body.time}', '${req.body.duration}')`;
+    connection.query(q, function (error, row, fields) {
+      if (error) {
+        console.log(error);
+      }
+      if (row) {
+  
+      //  console.log(row)
+      }
+      console.log('post ipah nutrient success')
+      // client.publish('debug/test/database/ipah1', 'updated')
       res.header('Content-Type', 'application/json; charset=utf-8')
       res.send('Sucess')
     });
