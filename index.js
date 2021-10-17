@@ -353,7 +353,7 @@ app.get('/api/schedule/ipah1',(req,res)=>{
   });
 })
 
-app.get('/api/schedule/ipah1/nutrient',(req,res)=>{
+app.get('/api/schedule/nutrient/ipah1',(req,res)=>{
   dat = [];
   var q = `SELECT * FROM ipah_nutrient_schedule order by date asc`;
   // connection.connect();
