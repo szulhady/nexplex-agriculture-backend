@@ -363,12 +363,13 @@ app.get('/api/schedule/ipah1/nutrient',(req,res)=>{
     }
     if (row) {
       // console.log(row)
+      let data2=[]
       for (var i = 0; i < row.length; i++) {
- 
+        data2.push(`Duration : ${row[i].duration} minutes`)
         let data = {
           date:row[i].date,
           time:row[i].time,
-          duration:row[i].duration,
+          remarks:data2,
         }
         dat.push(
           data
