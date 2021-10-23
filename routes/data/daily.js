@@ -58,6 +58,7 @@ router.get("/", (req, res, next) => {
       console.log(error);
     }
     if (row) {
+      console.log(row)
       for (var i = 0; i < row.length; i++) {
         dat.push({
           min: row[i].min.toFixed(2),

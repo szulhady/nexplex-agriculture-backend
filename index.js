@@ -10,6 +10,8 @@ var client  = mqtt.connect('wss://tron.airmode.live:8083/mqtt')
 
 const schedule = require('node-schedule');
 
+const axios = require('axios')
+
   var ret = [];
   var dat = [];
   var ipah1 = []
@@ -33,6 +35,8 @@ const schedule = require('node-schedule');
   app.use( express.json() );
   app.use( express.urlencoded( { extended: false } ));
 
+
+// CREATE JOB SCHEDULE FOR DRIPPING WATER/NUTRIENT
   function getUpdatedDataIpah(){
     if(typeof jobIpah !== 'undefined'){
       // console.log(timeIpahArrayLength)
@@ -274,31 +278,25 @@ const schedule = require('node-schedule');
          console.log(error);
        }
        if (row) {
- 
+//  console.log(row)
          for (var i = 0; i < row.length; i++) {
            let timeArray  = row[i].time.split(',')
            let durationArray  = row[i].duration.split(',')
-           
+           let substanceArray = row[i].substance.split(',')
+          //  console.log(substanceArray)
            timeArray.forEach((element,index) => {
              jobKongPo = schedule.scheduleJob(`kongPo${index}`,row[i].date  +" "+  element+":00", function(){
-               console.log('Kong Po Schedule.',new Date(), blockArray[index], durationArray[index]);
-               let sv
-               if(blockArray[index]=='1'){
-                 sv='13'
-               }else if(blockArray[index]=='2'){
-                 sv='14'
-               }else if(blockArray[index]=='3'){
-                 sv='15'
-               }else if(blockArray[index]=='1,2' || blockArray[index]=='2,1' ){
-                 sv='13,14'
-               }else if(blockArray[index]=='1,3' || blockArray[index]=='3,1' ){
-                 sv='13,15'
-               }else if(blockArray[index]=='2,3' || blockArray[index]=='3,2' ){
-                 sv='14,15'
+              //  console.log('Kong Po Schedule.',new Date(), blockArray[index], durationArray[index]);
+               let medium
+               if (substanceArray[index] == 'water'){
+                medium = 1
                }else{
-                 sv='all'
+                 medium =2
                }
-               client.publish('debug/nexplex/control/kong/sv', JSON.stringify({time:`${element}`, block:`${sv}`, duration:`${durationArray[index]}`}))
+               console.log(`{${medium},${durationArray[index]}}`)
+               client.publish('filter/np/c/kongpo/d', `{"D1":${medium},"D2":${durationArray[index]}}`)
+
+              //  client.publish('debug/nexplex/control/kong/sv', JSON.stringify({time:`${element}`, block:`${sv}`, duration:`${durationArray[index]}`}))
              });
            });
           //  console.log(timeArray)
@@ -308,11 +306,143 @@ const schedule = require('node-schedule');
     });
    }
 
+// CREATE JOB SCHEDULE FOR NUTRIENT PREPARATION
+function getUpdatedDataIpahNutrient(){
+  if(typeof jobIpahNutrient !== 'undefined'){
+    delete jobIpahNutrient;
+    for(i=0; i<timeIpahArrayLength;i++){
+      if(schedule.scheduledJobs[`ipahNutrient${i}`]){
+        schedule.scheduledJobs[`ipahNutrient${i}`].cancel()
+      }
+    }
+  }
+  dat = [];
+  var q = `SELECT * FROM ipah_nutrient_schedule WHERE date = CURDATE()`;
+  connection.query(q, function (error, row, fields) {
+    if (error) {
+      console.log(error);
+    }
+    if (row) {
+      for (var i = 0; i < row.length; i++) {
+        // console.log(row[i].date)
+        let time = row[i].time
+        let duration = row[i].duration
+   
+          jobIpahNutrient = schedule.scheduleJob(`ipahNutrient${i}`,row[i].date  +" "+  "13:09:00", function(){
+            console.log('Ipah Nutrient Schedule.',new Date(), time, duration);
+            client.publish('debug/nexplex/control/ipah/sv', JSON.stringify({'time':`${time}`, 'duration':`${duration}`}))
+        });
+        timeIpahArrayLength=row.length
+      }
+    }
+  });
+}
+
+function getUpdatedDataTkpmIpahNutrient(){
+  if(typeof jobTkpmIpahNutrient !== 'undefined'){
+    delete jobTkpmIpahNutrient;
+    for(i=0; i<timeTkpmIpahArrayLength;i++){
+      if(schedule.scheduledJobs[`tkpmIpahNutrient${i}`]){
+        schedule.scheduledJobs[`tkpmIpahNutrient${i}`].cancel()
+      }
+    }
+  }
+  dat = [];
+  var q = `SELECT * FROM tkpmipah_nutrient_schedule WHERE date = CURDATE()`;
+  connection.query(q, function (error, row, fields) {
+    if (error) {
+      console.log(error);
+    }
+    if (row) {
+      for (var i = 0; i < row.length; i++) {
+        // console.log(row[i].date)
+        let time = row[i].time
+        let duration = row[i].duration
+   
+          jobTkpmIpahNutrient = schedule.scheduleJob(`tkpmIpahNutrient${i}`,row[i].date  +" "+  "20:54:00", function(){
+            console.log('Tkpm Ipah Nutrient Schedule.',new Date(), time, duration);
+            client.publish('debug/nexplex/control/tkpmIpah/sv', JSON.stringify({'time':`${time}`, 'duration':`${duration}`}))
+        });
+        timeTkpmIpahArrayLength=row.length
+      }
+    }
+  });
+}
+
+function getUpdatedDataTkpmPagohNutrient(){
+  if(typeof jobTkpmPagohNutrient !== 'undefined'){
+    delete jobTkpmPagohNutrient;
+    for(i=0; i<timeTkpmPagohArrayLength;i++){
+      if(schedule.scheduledJobs[`tkpmPagohNutrient${i}`]){
+        schedule.scheduledJobs[`tkpmPagohNutrient${i}`].cancel()
+      }
+    }
+  }
+  dat = [];
+  var q = `SELECT * FROM tkpmpagoh_nutrient_schedule WHERE date = CURDATE()`;
+  connection.query(q, function (error, row, fields) {
+    if (error) {
+      console.log(error);
+    }
+    if (row) {
+      for (var i = 0; i < row.length; i++) {
+        // console.log(row[i].date)
+        let time = row[i].time
+        let duration = row[i].duration
+   
+          jobTkpmPagohNutrient = schedule.scheduleJob(`tkpmPagohNutrient${i}`,row[i].date  +" "+  "22:24:00", function(){
+            console.log('Tkpm Pagoh Nutrient Schedule.',new Date(), time, duration);
+            client.publish('debug/nexplex/control/tkpmPagoh/sv', JSON.stringify({'time':`${time}`, 'duration':`${duration}`}))
+        });
+        timeTkpmPagohArrayLength=row.length
+      }
+    }
+  });
+}
+
+function getUpdatedDataKongPoNutrient(){
+  if(typeof jobKongPoNutrient !== 'undefined'){
+    delete jobKongPoNutrient;
+    for(i=0; i<timeKongPoArrayLength;i++){
+      if(schedule.scheduledJobs[`kongPoNutrient${i}`]){
+        schedule.scheduledJobs[`kongPoNutrient${i}`].cancel()
+      }
+    }
+  }
+  dat = [];
+  var q = `SELECT * FROM kongpo_nutrient_schedule WHERE date = CURDATE()`;
+  connection.query(q, function (error, row, fields) {
+    if (error) {
+      console.log(error);
+    }
+    if (row) {
+      for (var i = 0; i < row.length; i++) {
+        // console.log(row[i].date)
+        let time = row[i].time
+        // console.log(time)
+        let duration = row[i].duration
+   
+          jobKongPoNutrient = schedule.scheduleJob(`kongPoNutrient${i}`,row[i].date  +" "+time, function(){
+            console.log('Kong Po Nutrient Schedule.',new Date(), time, duration);
+            // client.publish('filter/np/c/kongpo/n', JSON.stringify({'time':`${time}`, 'duration':`${duration}`}))
+        client.publish('filter/np/c/kongpo/n', `{"D1":10,"D2":${duration}}`)
+        });
+        timeKongPoArrayLength=row.length
+      }
+    }
+  });
+}
+
+// // // // // //
+
 app.get('/', (req, res) => {
   client.publish('debug/test/express','Hello World From Express!')
   res.send(new Date().toLocaleTimeString())
 })
 
+
+// GET //
+// DRIPPING WATER/NUTRIENT //
 app.get('/api/schedule/ipah1',(req,res)=>{
   dat = [];
   var q = `SELECT * FROM ipah_schedule order by date asc`;
@@ -344,36 +474,7 @@ app.get('/api/schedule/ipah1',(req,res)=>{
         dat.push(
           data
         );
-      }
-      ipah1=dat
-    }
-    ret = JSON.stringify(ipah1)
-    res.header('Content-Type', 'application/json; charset=utf-8')
-    res.send(ret)
-  });
-})
-
-app.get('/api/schedule/nutrient/ipah1',(req,res)=>{
-  dat = [];
-  var q = `SELECT * FROM ipah_nutrient_schedule order by date asc`;
-  // connection.connect();
-  connection.query(q, function (error, row, fields) {
-    if (error) {
-      console.log(error);
-    }
-    if (row) {
-      // console.log(row)
-      for (var i = 0; i < row.length; i++) {
-        let data2=[]
-        data2.push(`Duration : ${row[i].duration} minutes`)
-        let data = {
-          date:row[i].date,
-          time:row[i].time,
-          remarks:data2,
-        }
-        dat.push(
-          data
-        );
+        console.log(dat)
       }
       ipah1=dat
     }
@@ -410,36 +511,6 @@ app.get('/api/schedule/ipah2',(req,res)=>{
           // block:row[i].block,
           // duration:row[i].duration,
           remarks:data2
-        }
-        dat.push(
-          data
-        );
-      }
-      ipah1=dat
-    }
-    ret = JSON.stringify(ipah1)
-    res.header('Content-Type', 'application/json; charset=utf-8')
-    res.send(ret)
-  });
-})
-
-app.get('/api/schedule/ipah2/nutrient',(req,res)=>{
-  dat = [];
-  var q = `SELECT * FROM tkpmipah_nutrient_schedule order by date asc`;
-  // connection.connect();
-  connection.query(q, function (error, row, fields) {
-    if (error) {
-      console.log(error);
-    }
-    if (row) {
-
-      for (var i = 0; i < row.length; i++) {
-        // console.log(blockArray)
-        // console.log(data2)
-        let data = {
-          date:row[i].date,
-          time:row[i].time,
-          duration:row[i].duration,
         }
         dat.push(
           data
@@ -493,23 +564,64 @@ app.get('/api/schedule/tkpmPagoh',(req,res)=>{
   });
 })
 
-app.get('/api/schedule/tkpmPagoh/nutrient',(req,res)=>{
+app.get('/api/schedule/kongPo',(req,res)=>{
   dat = [];
-  var q = `SELECT * FROM tkpmpagoh_nutrient_schedule order by date asc`;
+  var q = `SELECT * FROM kongpo_schedule order by date asc`;
   // connection.connect();
   connection.query(q, function (error, row, fields) {
     if (error) {
       console.log(error);
     }
     if (row) {
-
+      console.log(row)
       for (var i = 0; i < row.length; i++) {
-
+        let data2=[]
+        let timeArray  = row[i].time.split(',')
+        let durationArray  = row[i].duration.split(',')
+        let substanceArray = row[i].substance.split(',')
+        // console.log(row[i])
+        timeArray.forEach((element,index) => {
+          data2.push(` ${index+1}) [ Time : ${element}, Duration : ${durationArray[index]} min, Substance : ${substanceArray[index]}  ], `)
+        });
         // console.log(data2)
         let data = {
           date:row[i].date,
+          // time:row[i].time,
+          // block:row[i].block,
+          // duration:row[i].duration,
+          remarks:data2
+        }
+        dat.push(
+          data
+        );
+        console.log(dat)
+      }
+      ipah1=dat
+    }
+    ret = JSON.stringify(ipah1)
+    res.header('Content-Type', 'application/json; charset=utf-8')
+    res.send(ret)
+  });
+})
+
+// NUTREINT PREPARATION //
+app.get('/api/schedule/ipah1/nutrient',(req,res)=>{
+  dat = [];
+  var q = `SELECT * FROM ipah_nutrient_schedule order by date asc`;
+  // connection.connect();
+  connection.query(q, function (error, row, fields) {
+    if (error) {
+      console.log(error);
+    }
+    if (row) {
+      // console.log(row)
+      for (var i = 0; i < row.length; i++) {
+        let data2=[]
+        data2.push(`Duration : ${row[i].duration} minutes`)
+        let data = {
+          date:row[i].date,
           time:row[i].time,
-          duration:row[i].duration,
+          remarks:data2,
         }
         dat.push(
           data
@@ -523,9 +635,9 @@ app.get('/api/schedule/tkpmPagoh/nutrient',(req,res)=>{
   });
 })
 
-app.get('/api/schedule/kongPo',(req,res)=>{
+app.get('/api/schedule/ipah2/nutrient',(req,res)=>{
   dat = [];
-  var q = `SELECT * FROM kongpo_schedule order by date asc`;
+  var q = `SELECT * FROM tkpmipah_nutrient_schedule order by date asc`;
   // connection.connect();
   connection.query(q, function (error, row, fields) {
     if (error) {
@@ -534,8 +646,45 @@ app.get('/api/schedule/kongPo',(req,res)=>{
     if (row) {
 
       for (var i = 0; i < row.length; i++) {
+        let data2=[]
+        data2.push(`Duration : ${row[i].duration} minutes`)
+        let data = {
+          date:row[i].date,
+          time:row[i].time,
+          remarks:data2,
+        }
         dat.push(
-          row[i].date
+          data
+        );
+      }
+      ipah1=dat
+    }
+    ret = JSON.stringify(ipah1)
+    res.header('Content-Type', 'application/json; charset=utf-8')
+    res.send(ret)
+  });
+})
+
+app.get('/api/schedule/tkpmPagoh/nutrient',(req,res)=>{
+  dat = [];
+  var q = `SELECT * FROM tkpmpagoh_nutrient_schedule order by date asc`;
+  // connection.connect();
+  connection.query(q, function (error, row, fields) {
+    if (error) {
+      console.log(error);
+    }
+    if (row) {
+
+      for (var i = 0; i < row.length; i++) {
+        let data2=[]
+        data2.push(`Duration : ${row[i].duration} minutes`)
+        let data = {
+          date:row[i].date,
+          time:row[i].time,
+          remarks:data2,
+        }
+        dat.push(
+          data
         );
       }
       ipah1=dat
@@ -555,12 +704,13 @@ app.get('/api/schedule/kongPo/nutrient',(req,res)=>{
       console.log(error);
     }
     if (row) {
-
       for (var i = 0; i < row.length; i++) {
+        let data2=[]
+        data2.push(`Duration : ${row[i].duration} minutes`)
         let data = {
           date:row[i].date,
           time:row[i].time,
-          duration:row[i].duration,
+          remarks:data2,
         }
         dat.push(
           data
@@ -574,7 +724,8 @@ app.get('/api/schedule/kongPo/nutrient',(req,res)=>{
   });
 })
 
-
+// POST //
+// DRIPPING WATER/NUTRIENT //
 app.post('/api/setSchedule/ipah1',(req,res)=>{
 // console.log(req.body.block)
     // ret = JSON.stringify(ipah1)
@@ -593,6 +744,65 @@ app.post('/api/setSchedule/ipah1',(req,res)=>{
     });
 ;
 })
+
+app.post('/api/setSchedule/ipah2',(req,res)=>{
+  // console.log(req.body)
+      // ret = JSON.stringify(ipah1)
+      var q = `INSERT INTO tkpmipah_schedule (date,time, block, duration,substance) VALUES ('${req.body.date}', '${req.body.time}', '${req.body.block}', '${req.body.duration}', '${req.body.substance}')`;
+      connection.query(q, function (error, row, fields) {
+        if (error) {
+          console.log(error);
+        }
+        if (row) {
+    
+        //  console.log(row)
+        }
+        client.publish('debug/test/database/ipah2', 'updated')
+        res.header('Content-Type', 'application/json; charset=utf-8')
+        res.send('Sucess')
+      });
+  ;
+})
+
+app.post('/api/setSchedule/tkpmPagoh',(req,res)=>{
+  // console.log(req.body)
+      // ret = JSON.stringify(ipah1)
+      var q = `INSERT INTO tkpmpagoh_schedule (date,time, block, duration,substance) VALUES ('${req.body.date}', '${req.body.time}', '${req.body.block}', '${req.body.duration}', '${req.body.substance}')`;
+      connection.query(q, function (error, row, fields) {
+        if (error) {
+          console.log(error);
+        }
+        if (row) {
+    
+        //  console.log(row)
+        }
+        client.publish('debug/test/database/tkpmPagoh', 'updated')
+        res.header('Content-Type', 'application/json; charset=utf-8')
+        res.send('Sucess')
+      });
+  ;
+})
+
+app.post('/api/setSchedule/kongPo',(req,res)=>{
+  // console.log(req.body.block)
+      // ret = JSON.stringify(ipah1)
+      var q = `INSERT INTO kongpo_schedule (date,time,duration, substance) VALUES ('${req.body.date}', '${req.body.time}', '${req.body.duration}', '${req.body.substance}')`;
+      connection.query(q, function (error, row, fields) {
+        if (error) {
+          console.log(error);
+        }
+        if (row) {
+    
+        //  console.log(row)
+        }
+        client.publish('debug/test/database/ipah1', 'updated')
+        res.header('Content-Type', 'application/json; charset=utf-8')
+        res.send('Sucess')
+      });
+  ;
+})
+
+// NUTREINT PREPARATION //
 app.post('/api/setSchedule/ipah1/nutrient',(req,res)=>{
 // console.log(req.body.block)
     // ret = JSON.stringify(ipah1)
@@ -613,64 +823,67 @@ app.post('/api/setSchedule/ipah1/nutrient',(req,res)=>{
 ;
 })
 
-app.post('/api/setSchedule/ipah2',(req,res)=>{
-// console.log(req.body)
-    // ret = JSON.stringify(ipah1)
-    var q = `INSERT INTO tkpmipah_schedule (date,time, block, duration,substance) VALUES ('${req.body.date}', '${req.body.time}', '${req.body.block}', '${req.body.duration}', '${req.body.substance}')`;
-    connection.query(q, function (error, row, fields) {
-      if (error) {
-        console.log(error);
-      }
-      if (row) {
-  
-      //  console.log(row)
-      }
-      client.publish('debug/test/database/ipah2', 'updated')
-      res.header('Content-Type', 'application/json; charset=utf-8')
-      res.send('Sucess')
-    });
-;
-})
-
-app.post('/api/setSchedule/tkpmPagoh',(req,res)=>{
+app.post('/api/setSchedule/ipah2/nutrient',(req,res)=>{
   // console.log(req.body)
       // ret = JSON.stringify(ipah1)
-      var q = `INSERT INTO tkpmpagoh_schedule (date,time, block, duration,substance) VALUES ('${req.body.date}', '${req.body.time}', '${req.body.block}', '${req.body.duration}', '${req.body.substance}')`;
+      var q = `INSERT INTO tkpmipah_nutrient_schedule (date,time,duration) VALUES ('${req.body.date}', '${req.body.time}', '${req.body.duration}')`;
       connection.query(q, function (error, row, fields) {
         if (error) {
           console.log(error);
         }
         if (row) {
-    
+          console.log('post tkpm ipah nutrient success')
         //  console.log(row)
         }
-        client.publish('debug/test/database/tkpmPagoh', 'updated')
+        // client.publish('debug/test/database/ipah2', 'updated')
         res.header('Content-Type', 'application/json; charset=utf-8')
         res.send('Sucess')
       });
   ;
-  })
+})
 
-  app.post('/api/setSchedule/kongPo',(req,res)=>{
-    // console.log(req.body.date)
-        // ret = JSON.stringify(ipah1)
-        var q = `INSERT INTO kongpo_schedule (date,time, duration) VALUES ('${req.body.date}', '${req.body.time}', '${req.body.duration}')`;
-        connection.query(q, function (error, row, fields) {
-          if (error) {
-            console.log(error);
-          }
-          if (row) {
-      
-          //  console.log(row)
-          }
-          client.publish('debug/test/database/kongPo', 'updated')
-          res.header('Content-Type', 'application/json; charset=utf-8')
-          res.send('Sucess')
-        });
-    ;
-    })
+app.post('/api/setSchedule/tkpmPagoh/nutrient',(req,res)=>{
+  // console.log(req.body)
+      // ret = JSON.stringify(ipah1)
+      var q = `INSERT INTO tkpmpagoh_nutrient_schedule (date,time,duration) VALUES ('${req.body.date}', '${req.body.time}', '${req.body.duration}')`;
+      connection.query(q, function (error, row, fields) {
+        if (error) {
+          console.log(error);
+        }
+        if (row) {
+          console.log('post tkpm pagoh nutrient success')
+        //  console.log(row)
+        }
+        // client.publish('debug/test/database/tkpmPagoh', 'updated')
+        res.header('Content-Type', 'application/json; charset=utf-8')
+        res.send('Sucess')
+      });
+  ;
+})
 
-    app.delete('/api/schedule/ipah1',(req,res)=>{
+app.post('/api/setSchedule/kongPo/nutrient',(req,res)=>{
+  // console.log(req.body.date)
+      // ret = JSON.stringify(ipah1)
+      var q = `INSERT INTO kongpo_nutrient_schedule (date,time, duration) VALUES ('${req.body.date}', '${req.body.time}', '${req.body.duration}')`;
+      connection.query(q, function (error, row, fields) {
+        if (error) {
+          console.log(error);
+        }
+        if (row) {
+          console.log('post kong po nutrient success')
+        //  console.log(row)
+        }
+        // client.publish('debug/test/database/kongPo', 'updated')
+        res.header('Content-Type', 'application/json; charset=utf-8')
+        res.send('Sucess')
+      });
+  ;
+})
+
+
+// DELETE //
+// DRIPPING WATER/NUTRIENT //
+app.delete('/api/schedule/ipah1',(req,res)=>{
       dat = [];
       var q = `DELETE FROM ipah_schedule WHERE date = "${req.body.date}"`;
       // connection.connect();
@@ -683,22 +896,9 @@ app.post('/api/setSchedule/tkpmPagoh',(req,res)=>{
 
         }
       });
-    })
-    app.delete('/api/schedule/ipah1/nutrient',(req,res)=>{
-      dat = [];
-      var q = `DELETE FROM ipah_nutrient_schedule WHERE date = "${req.body.date}"`;
-      // connection.connect();
-      connection.query(q, function (error, row, fields) {
-        if (error) {
-          console.log(error);
-        }
-        if (row) {
-          res.json('deleted')
+})
 
-        }
-      });
-    })
-    app.delete('/api/schedule/ipah2',(req,res)=>{
+app.delete('/api/schedule/ipah2',(req,res)=>{
       dat = [];
       var q = `DELETE FROM tkpmipah_schedule WHERE date = "${req.body.date}"`;
       // connection.connect();
@@ -711,8 +911,9 @@ app.post('/api/setSchedule/tkpmPagoh',(req,res)=>{
 
         }
       });
-    })
-    app.delete('/api/schedule/tkpmPagoh',(req,res)=>{
+})
+
+app.delete('/api/schedule/tkpmPagoh',(req,res)=>{
       dat = [];
       var q = `DELETE FROM tkpmpagoh_schedule WHERE date = "${req.body.date}"`;
       // connection.connect();
@@ -725,8 +926,9 @@ app.post('/api/setSchedule/tkpmPagoh',(req,res)=>{
 
         }
       });
-    })
-    app.delete('/api/schedule/kongPo',(req,res)=>{
+})
+
+app.delete('/api/schedule/kongPo',(req,res)=>{
       dat = [];
       var q = `DELETE FROM kongpo_schedule WHERE date = "${req.body.date}"`;
       // connection.connect();
@@ -739,8 +941,127 @@ app.post('/api/setSchedule/tkpmPagoh',(req,res)=>{
 
         }
       });
-    })
+})
 
+//  NUTRIENT PREPARATION //
+app.delete('/api/schedule/ipah1/nutrient',(req,res)=>{
+      dat = [];
+      var q = `DELETE FROM ipah_nutrient_schedule WHERE date = "${req.body.date}"`;
+      // connection.connect();
+      connection.query(q, function (error, row, fields) {
+        if (error) {
+          console.log(error);
+        }
+        if (row) {
+          res.json('deleted')
+
+        }
+      });
+})
+
+app.delete('/api/schedule/ipah2/nutrient',(req,res)=>{
+      dat = [];
+      var q = `DELETE FROM tkpmipah_nutrient_schedule WHERE date = "${req.body.date}"`;
+      // connection.connect();
+      connection.query(q, function (error, row, fields) {
+        if (error) {
+          console.log(error);
+        }
+        if (row) {
+          res.json('deleted')
+        }
+      });
+})
+
+app.delete('/api/schedule/tkpmPagoh/nutrient',(req,res)=>{
+  dat = [];
+  var q = `DELETE FROM tkpmpagoh_nutrient_schedule WHERE date = "${req.body.date}"`;
+  // connection.connect();
+  connection.query(q, function (error, row, fields) {
+    if (error) {
+      console.log(error);
+    }
+    if (row) {
+      res.json('deleted')
+    }
+  });
+})
+
+app.delete('/api/schedule/kongPo/nutrient',(req,res)=>{
+  dat = [];
+  var q = `DELETE FROM kongpo_nutrient_schedule WHERE date = "${req.body.date}"`;
+  // connection.connect();
+  connection.query(q, function (error, row, fields) {
+    if (error) {
+      console.log(error);
+    }
+    if (row) {
+      res.json('deleted')
+    }
+  });
+})
+
+
+// REPORT GENERATOR //
+app.post('/api/report/userRegister',(req,res)=>{
+  console.log(req.body)
+})
+
+app.post('/api/report/operationInformation',(req,res)=>{
+  console.log(req.body)
+})
+
+app.post('/api/report/yieldCropInformation',(req,res)=>{
+  console.log(req.body)
+})
+
+app.post('/api/report/report',(req,res)=>{
+  console.log(req.body)
+})
+
+// OPEN WEATHER MAP API //
+
+app.get("/api/openWeatherMap/ipah1", async (req, res) => {
+  try {
+      const response = await axios.get("https://api.openweathermap.org/data/2.5/forecast?lat=1.9340&lon=103.1841&appid=45a2a23d23c78dbe34c5fbd75a591573&units=metric")
+      res.json(response.data)
+  }
+  catch (err) {
+      console.log(err)
+  }
+})
+
+app.get("/api/openWeatherMap/ipah2", async (req, res) => {
+  try {
+      const response = await axios.get("https://api.openweathermap.org/data/2.5/forecast?lat=1.9340&lon=103.1841&appid=45a2a23d23c78dbe34c5fbd75a591573&units=metric")
+      res.json(response.data)
+  }
+  catch (err) {
+      console.log(err)
+  }
+})
+
+app.get("/api/openWeatherMap/tkpmPagoh", async (req, res) => {
+  try {
+      const response = await axios.get("https://api.openweathermap.org/data/2.5/forecast?lat=2.1381&lon=102.7395&appid=45a2a23d23c78dbe34c5fbd75a591573&units=metric")
+      res.json(response.data)
+  }
+  catch (err) {
+      console.log(err)
+  }
+})
+
+app.get("/api/openWeatherMap/kongPo", async (req, res) => {
+  try {
+      const response = await axios.get("https://api.openweathermap.org/data/2.5/forecast?lat=1.5135&lon=103.9605&appid=45a2a23d23c78dbe34c5fbd75a591573&units=metric")
+      res.json(response.data)
+  }
+  catch (err) {
+      console.log(err)
+  }
+})
+
+// // // // // // // // //
 client.on('connect', function () {
   client.subscribe('debug/test/database/ipah1', function (err) {
     if (!err) {
@@ -794,10 +1115,13 @@ client.on('message', function (topic, message) {
   // client.end()
 })
 
+// API FOR USER/AUTH 
 app.use("/api/auth", require("./routes/user/auth"))
 app.use("/api/user", require("./routes/user/user"))
 // app.use("/api/admin", require("./routes/admin"))
 
+
+// API FOR TRENDS
 app.use("/api/hourly", require("./routes/data/hourly"))
 app.use("/api/hourly/mobile", require("./routes/data/hourlyMobile"))
 app.use("/api/daily", require("./routes/data/daily"))
@@ -810,9 +1134,16 @@ app.listen(port, () => {
 })
 
 setInterval(()=>{
-// console.log(new Date())
+
+// DRIPING WATER/NUTRIENT
 getUpdatedDataIpah()
 getUpdatedDataTkpmIpah()
 getUpdatedDataTkpmPagoh()
 getUpdatedDataKongPo()
-},60000)
+
+// NUTRIENT PREPARATION
+getUpdatedDataIpahNutrient()
+getUpdatedDataTkpmIpahNutrient()
+getUpdatedDataTkpmPagohNutrient()
+getUpdatedDataKongPoNutrient()
+},6000)
