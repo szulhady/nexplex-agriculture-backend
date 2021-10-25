@@ -340,7 +340,7 @@ function getUpdatedDataIpahNutrient(){
         let time = row[i].time
         let duration = row[i].duration
    
-          jobIpahNutrient = schedule.scheduleJob(`ipahNutrient${i}`,row[i].date  +" "+  "16:27:00", function(){
+          jobIpahNutrient = schedule.scheduleJob(`ipahNutrient${i}`,row[i].date  +" "+  "05:00:00", function(){
             console.log('Ipah Nutrient Schedule.',new Date(), time, duration);
             // client.publish('debug/nexplex/control/ipah/sv', JSON.stringify({'time':`${time}`, 'duration':`${duration}`}))
             client.publish('np/c/ipah/n', `{"D1":10,"D2":${duration}}`)
@@ -372,7 +372,7 @@ function getUpdatedDataTkpmIpahNutrient(){
         let time = row[i].time
         let duration = row[i].duration
    
-          jobTkpmIpahNutrient = schedule.scheduleJob(`tkpmIpahNutrient${i}`,row[i].date  +" "+  "12:39:00", function(){
+          jobTkpmIpahNutrient = schedule.scheduleJob(`tkpmIpahNutrient${i}`,row[i].date  +" "+  "05:00:00", function(){
             console.log('Tkpm Ipah Nutrient Schedule.',new Date(), time, duration);
             client.publish('np/c/tkpmIpah/n', `{"D1":10,"D2":${duration}}`)
           });
@@ -403,7 +403,7 @@ function getUpdatedDataTkpmPagohNutrient(){
         let time = row[i].time
         let duration = row[i].duration
    
-          jobTkpmPagohNutrient = schedule.scheduleJob(`tkpmPagohNutrient${i}`,row[i].date  +" "+  "19:27:00", function(){
+          jobTkpmPagohNutrient = schedule.scheduleJob(`tkpmPagohNutrient${i}`,row[i].date  +" "+  "05:00:00", function(){
             console.log('Tkpm Pagoh Nutrient Schedule.',new Date(), time, duration);
             client.publish('np/c/tkpmPagoh/n', `{"D1":10,"D2":${duration}}`)
 
