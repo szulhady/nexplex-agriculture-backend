@@ -68,21 +68,32 @@ const axios = require('axios')
           let timeArray  = row[i].time.split(',')
           let blockArray  = row[i].block.split(',')
           let durationArray  = row[i].duration.split(',')
-          let subtanceArray = row[i].substance.split(',')
+          let substanceArray = row[i].substance.split(',')
           
           timeArray.forEach((element,index) => {
             jobIpah = schedule.scheduleJob(`ipah${index}`,row[i].date  +" "+  element+":00", function(){
-              console.log('Ipah Schedule.',new Date(), blockArray[index], durationArray[index], subtanceArray[index]);
-              let sv
-              if(blockArray[index]==1){
-                sv='5'
-              }else if(blockArray[index]==2){
-                sv='6'
-              }else{
-                sv='all'
+              console.log('Ipah Schedule.',new Date(), blockArray[index], durationArray[index], substanceArray[index]);
+              
+              let medium
+              if (substanceArray[index] == 'water' && blockArray[index] ==1){
+               medium = 1
+              }else if(substanceArray[index] == 'water' && blockArray[index] ==2){
+                medium =2
+              }else if(substanceArray[index] == 'water' && (blockArray[index]=='All')){
+                medium = 11
               }
+              
+              if (substanceArray[index] == 'fertilizer' && blockArray[index] ==1){
+                medium = 3
+               }else if(substanceArray[index] == 'fertilizer' && blockArray[index] ==2){
+                 medium =4
+               }else if(substanceArray[index] == 'fertilizer' && (blockArray[index]=='All')){
+                 medium = 22
+               }
+               console.log(`{"D1":${medium},"D2":${durationArray[index]}}`)
+               client.publish('filter/np/c/ipah/d', `{"D1":${medium},"D2":${durationArray[index]}}`)
               // client.publish('debug/nexplex/control/ipah/sv', `${element}`)
-              client.publish('debug/nexplex/control/ipah/sv', JSON.stringify({'time':`${element}`, 'block':`${sv}`, 'duration':`${durationArray[index]}`,'substance':`${subtanceArray[index]}`}))
+              // client.publish('debug/nexplex/control/ipah/sv', JSON.stringify({'time':`${element}`, 'block':`${sv}`, 'duration':`${durationArray[index]}`,'substance':`${subtanceArray[index]}`}))
             });
 
           });
@@ -124,62 +135,46 @@ const axios = require('axios')
           let timeArray  = row[i].time.split(',')
           let blockArray  = row[i].block.split('/')
           let durationArray  = row[i].duration.split(',')
-          let subtanceArray = row[i].substance.split(',')
+          let substanceArray = row[i].substance.split(',')
           // console.log(blockArray)
           timeArray.forEach((element,index) => {
             jobTkpmIpah = schedule.scheduleJob(`tkpmIpah${index}`,row[i].date  +" "+  element+":00", function(){
-              console.log('Tkpm Ipah Schedule.',new Date(), blockArray[index], durationArray[index], subtanceArray[index]);
-
-              let sv
-              if(blockArray[index]=='1'){
-                if(subtanceArray[index]=='water'){
-                  sv='1'
-                }else{
-                  sv='4'
-                }
-              }else if(blockArray[index]=='2'){
-                if(subtanceArray[index]=='water'){
-                  sv='2'
-                }else{
-                  sv='5'
-                }
-              }else if(blockArray[index]=='3'){
-                if(subtanceArray[index]=='water'){
-                  sv='3'
-                }else{
-                  sv='6'
-                }
-              }else if(blockArray[index]=='1,2' || blockArray[index]=='2,1' ){
-                
-                if(subtanceArray[index]=='water'){
-                  sv='12'
-                }else{
-                  sv='45'
-                }
-              }else if(blockArray[index]=='1,3' || blockArray[index]=='3,1' ){            
-                if(subtanceArray[index]=='water'){
-                  sv='13'
-                }else{
-                  sv='46'
-                }
-              }else if(blockArray[index]=='2,3' || blockArray[index]=='3,2' ){
-                if(subtanceArray[index]=='water'){
-                  sv='23'
-                }else{
-                  sv='45'
-                }
-              }else{
-                if(subtanceArray[index]=='water'){
-                  sv='123'
-                }else{
-                  sv='456'
-                }
+              console.log('Tkpm Ipah Schedule.',new Date(), blockArray[index], durationArray[index], substanceArray[index]);
+              let medium
+              if (substanceArray[index] == 'water' && blockArray[index] ==1){
+               medium = 1
+              }else if(substanceArray[index] == 'water' && blockArray[index] ==2){
+                medium =2
+              }else if(substanceArray[index] == 'water' && blockArray[index] ==3){
+                medium =2
+              }else if(substanceArray[index] == 'water' && (blockArray[index]=='1,2' || blockArray[index]=='2,1')){
+                medium = 12
+              }else if(substanceArray[index] == 'water' && (blockArray[index]=='1,3' || blockArray[index]=='3,1')){
+                medium = 13
+              }else if(substanceArray[index] == 'water' && (blockArray[index]=='2,3' || blockArray[index]=='3,2')){
+                medium = 23
+              }else if(substanceArray[index] == 'water' && (blockArray[index]=='1,2,3' || blockArray[index]=='1,3,2' ||blockArray[index]=='2,1,3' ||blockArray[index]=='2,3,1' ||blockArray[index]=='3,1,2' ||blockArray[index]=='3,2,1')){
+                medium = 123
               }
-              if(subtanceArray[index]=='water'){
-                client.publish('debug2/nexplex/control/tkpmIpah/dripping', `${sv},${durationArray[index]}`)
-              }else{
-                client.publish('debug2/nexplex/control/tkpmIpah/nutrient', `${sv},${durationArray[index]}`)
-              }
+              
+              if (substanceArray[index] == 'fertilizer' && blockArray[index] ==1){
+                medium = 4
+               }else if(substanceArray[index] == 'fertilizer' && blockArray[index] ==2){
+                 medium =5
+               }else if(substanceArray[index] == 'fertilizer' && blockArray[index] ==3){
+                 medium =6
+               }else if(substanceArray[index] == 'fertilizer' && (blockArray[index]=='1,2' || blockArray[index]=='2,1')){
+                 medium = 45
+               }else if(substanceArray[index] == 'fertilizer' && (blockArray[index]=='1,3' || blockArray[index]=='3,1')){
+                 medium = 46
+               }else if(substanceArray[index] == 'fertilizer' && (blockArray[index]=='2,3' || blockArray[index]=='3,2')){
+                 medium = 56
+               }else if(substanceArray[index] == 'fertilizer' && (blockArray[index]=='1,2,3' || blockArray[index]=='1,3,2' ||blockArray[index]=='2,1,3' ||blockArray[index]=='2,3,1' ||blockArray[index]=='3,1,2' ||blockArray[index]=='3,2,1')){
+                 medium = 456
+               }
+               console.log(`{"D1":${medium},"D2":${durationArray[index]}}`)
+              //  client.publish('2filter/np/c/tkpmIpah/d', `{"D1":${medium},"D2":${durationArray[index]}}`)
+               client.publish('filter/np/c/tkpmIpah/d', `{"D1":${medium},"D2":${durationArray[index]}}`)
               // nexplex/control/tkpmIpah/dripping
               // client.publish('debug/nexplex/control/tkpm/sv', JSON.stringify({time:`${element}`, block:`${sv}`, duration:`${durationArray[index]}`,'substance':`${subtanceArray[index]}`}))
             });
@@ -225,28 +220,45 @@ const axios = require('axios')
             let timeArray  = row[i].time.split(',')
             let blockArray  = row[i].block.split('/')
             let durationArray  = row[i].duration.split(',')
-            let subtanceArray = row[i].substance.split(',')
+            let substanceArray = row[i].substance.split(',')
             
             timeArray.forEach((element,index) => {
               jobTkpmPagoh = schedule.scheduleJob(`pagoh${index}`,row[i].date  +" "+  element+":00", function(){
-                console.log('Tkpm Pagoh Schedule.',new Date(), blockArray[index], durationArray[index], subtanceArray[index]);
-                let sv
-              if(blockArray[index]=='1'){
-                sv='12'
-              }else if(blockArray[index]=='2'){
-                sv='13'
-              }else if(blockArray[index]=='3'){
-                sv='14'
-              }else if(blockArray[index]=='1,2' || blockArray[index]=='2,1' ){
-                sv='12,13'
-              }else if(blockArray[index]=='1,3' || blockArray[index]=='3,1' ){
-                sv='12,14'
-              }else if(blockArray[index]=='2,3' || blockArray[index]=='3,2' ){
-                sv='13,14'
-              }else{
-                sv='all'
-              }
-              client.publish('debug/nexplex/control/pagoh/sv', JSON.stringify({time:`${element}`, block:`${sv}`, duration:`${durationArray[index]}`,'substance':`${subtanceArray[index]}`}))
+                console.log('Tkpm Pagoh Schedule.',new Date(), blockArray[index], durationArray[index], substanceArray[index]);
+                
+                let medium
+                if (substanceArray[index] == 'water' && blockArray[index] ==1){
+                 medium = 1
+                }else if(substanceArray[index] == 'water' && blockArray[index] ==2){
+                  medium =2
+                }else if(substanceArray[index] == 'water' && blockArray[index] ==3){
+                  medium =2
+                }else if(substanceArray[index] == 'water' && (blockArray[index]=='1,2' || blockArray[index]=='2,1')){
+                  medium = 12
+                }else if(substanceArray[index] == 'water' && (blockArray[index]=='1,3' || blockArray[index]=='3,1')){
+                  medium = 13
+                }else if(substanceArray[index] == 'water' && (blockArray[index]=='2,3' || blockArray[index]=='3,2')){
+                  medium = 23
+                }else if(substanceArray[index] == 'water' && (blockArray[index]=='1,2,3' || blockArray[index]=='1,3,2' ||blockArray[index]=='2,1,3' ||blockArray[index]=='2,3,1' ||blockArray[index]=='3,1,2' ||blockArray[index]=='3,2,1')){
+                  medium = 123
+                }
+                
+                if (substanceArray[index] == 'fertilizer' && blockArray[index] ==1){
+                  medium = 4
+                 }else if(substanceArray[index] == 'fertilizer' && blockArray[index] ==2){
+                   medium =5
+                 }else if(substanceArray[index] == 'fertilizer' && blockArray[index] ==3){
+                   medium =6
+                 }else if(substanceArray[index] == 'fertilizer' && (blockArray[index]=='1,2' || blockArray[index]=='2,1')){
+                   medium = 45
+                 }else if(substanceArray[index] == 'fertilizer' && (blockArray[index]=='1,3' || blockArray[index]=='3,1')){
+                   medium = 46
+                 }else if(substanceArray[index] == 'fertilizer' && (blockArray[index]=='2,3' || blockArray[index]=='3,2')){
+                   medium = 56
+                 }else if(substanceArray[index] == 'fertilizer' && (blockArray[index]=='1,2,3' || blockArray[index]=='1,3,2' ||blockArray[index]=='2,1,3' ||blockArray[index]=='2,3,1' ||blockArray[index]=='3,1,2' ||blockArray[index]=='3,2,1')){
+                   medium = 456
+                 }
+              client.publish('filter/np/c/tkpmPagoh/d', `{"D1":${medium},"D2":${durationArray[index]}}`)
               });
             });
             // console.log(timeArray)
@@ -328,10 +340,11 @@ function getUpdatedDataIpahNutrient(){
         let time = row[i].time
         let duration = row[i].duration
    
-          jobIpahNutrient = schedule.scheduleJob(`ipahNutrient${i}`,row[i].date  +" "+  "13:09:00", function(){
+          jobIpahNutrient = schedule.scheduleJob(`ipahNutrient${i}`,row[i].date  +" "+  "16:27:00", function(){
             console.log('Ipah Nutrient Schedule.',new Date(), time, duration);
-            client.publish('debug/nexplex/control/ipah/sv', JSON.stringify({'time':`${time}`, 'duration':`${duration}`}))
-        });
+            // client.publish('debug/nexplex/control/ipah/sv', JSON.stringify({'time':`${time}`, 'duration':`${duration}`}))
+            client.publish('np/c/ipah/n', `{"D1":10,"D2":${duration}}`)
+          });
         timeIpahArrayLength=row.length
       }
     }
@@ -359,10 +372,10 @@ function getUpdatedDataTkpmIpahNutrient(){
         let time = row[i].time
         let duration = row[i].duration
    
-          jobTkpmIpahNutrient = schedule.scheduleJob(`tkpmIpahNutrient${i}`,row[i].date  +" "+  "20:54:00", function(){
+          jobTkpmIpahNutrient = schedule.scheduleJob(`tkpmIpahNutrient${i}`,row[i].date  +" "+  "12:39:00", function(){
             console.log('Tkpm Ipah Nutrient Schedule.',new Date(), time, duration);
-            client.publish('debug/nexplex/control/tkpmIpah/sv', JSON.stringify({'time':`${time}`, 'duration':`${duration}`}))
-        });
+            client.publish('np/c/tkpmIpah/n', `{"D1":10,"D2":${duration}}`)
+          });
         timeTkpmIpahArrayLength=row.length
       }
     }
@@ -390,9 +403,10 @@ function getUpdatedDataTkpmPagohNutrient(){
         let time = row[i].time
         let duration = row[i].duration
    
-          jobTkpmPagohNutrient = schedule.scheduleJob(`tkpmPagohNutrient${i}`,row[i].date  +" "+  "22:24:00", function(){
+          jobTkpmPagohNutrient = schedule.scheduleJob(`tkpmPagohNutrient${i}`,row[i].date  +" "+  "19:27:00", function(){
             console.log('Tkpm Pagoh Nutrient Schedule.',new Date(), time, duration);
-            client.publish('debug/nexplex/control/tkpmPagoh/sv', JSON.stringify({'time':`${time}`, 'duration':`${duration}`}))
+            client.publish('np/c/tkpmPagoh/n', `{"D1":10,"D2":${duration}}`)
+
         });
         timeTkpmPagohArrayLength=row.length
       }
@@ -1003,20 +1017,85 @@ app.delete('/api/schedule/kongPo/nutrient',(req,res)=>{
 
 
 // REPORT GENERATOR //
-app.post('/api/report/userRegister',(req,res)=>{
+app.post('/api/report/form',(req,res)=>{
+  let {user_id, fullName,widthArea, typeOfPlant,location,typeOfPlantSystem, typeOfIrrigationSystem,typeOfWaterSource ,typeOfWaterPump , waterPumpOutput ,typeOfFertilizer ,  typeOfInsecticide ,typeOfNozzle , durationOfFlush ,dateOfPlanting ,dateOfCropYield ,fertilizingDate ,insecticideProcessDate , dateOfPlantingYieldCropInformation, dateOfCropYieldYieldCropInformation ,yieldQuantity ,damageYieldQuantity ,sellingPrice ,salesRevenue ,seasonalResult ,annualResult ,salesRevenueReport ,yieldImprovement ,irrigationPeriod ,rainIntensity ,daysOfRaining ,systemBreakdown}= req.body
   console.log(req.body)
+  var q = `INSERT INTO nexplex_agriculture_report (user_id, fullName,widthArea, typeOfPlant,location,typeOfPlantSystem, typeOfIrrigationSystem,typeOfWaterSource ,typeOfWaterPump , waterPumpOutput ,typeOfFertilizer ,  typeOfInsecticide ,typeOfNozzle , durationOfFlush ,dateOfPlanting ,dateOfCropYield ,fertilizingDate , insecticideProcessDate, dateOfPlantingYieldCropInformation,dateOfCropYieldYieldCropInformation,yieldQuantity ,damageYieldQuantity ,sellingPrice ,salesRevenue ,seasonalResult ,annualResult ,salesRevenueReport,yieldImprovement ,irrigationPeriod ,rainIntensity ,daysOfRaining ,systemBreakdown) VALUES ('${user_id}', '${fullName}', '${widthArea}','${typeOfPlant}', '${location}', '${typeOfPlantSystem}','${typeOfIrrigationSystem}', '${typeOfWaterSource}', '${typeOfWaterPump}','${waterPumpOutput}', '${typeOfFertilizer}', '${typeOfInsecticide}','${typeOfNozzle}', '${durationOfFlush}', '${dateOfPlanting}','${dateOfCropYield}', '${fertilizingDate}', '${insecticideProcessDate}', '${dateOfPlantingYieldCropInformation}','${dateOfCropYieldYieldCropInformation }','${yieldQuantity}', '${damageYieldQuantity}', '${sellingPrice}','${salesRevenue}', '${seasonalResult}', '${annualResult}', '${salesRevenueReport}','${yieldImprovement}', '${irrigationPeriod}','${rainIntensity}', '${daysOfRaining}', '${systemBreakdown}')`;
+
+  connection.query(q, function (error, row, fields) {
+    if (error) {
+      console.log(error);
+    }
+    if (row) {
+      console.log('post nexplex_agriculture_report success')
+    //  console.log(row)
+    
+    }
+    // client.publish('debug/test/database/kongPo', 'updated')
+    res.header('Content-Type', 'application/json; charset=utf-8')
+    res.send('Sucess')
+  });
 })
 
-app.post('/api/report/operationInformation',(req,res)=>{
-  console.log(req.body)
+
+app.get('/api/report/ipah1',(req,res)=>{
+  console.log('heyyy')
+  dat = [];
+  var q = `SELECT * FROM nexplex_agriculture_report where user_id="0" order by timestamp desc`;
+  // connection.connect();
+  connection.query(q, function (error, row, fields) {
+    if (error) {
+      console.log(error);
+    }
+    if (row) {
+      console.log(row[0])
+      ipah1=row[0]
+    }
+    ret = JSON.stringify(ipah1)
+    // ret = JSON.stringify(ipah1)
+    res.header('Content-Type', 'application/json; charset=utf-8')
+    res.send(ret)
+  });
 })
 
-app.post('/api/report/yieldCropInformation',(req,res)=>{
-  console.log(req.body)
+app.get('/api/report/ipah2',(req,res)=>{
+  console.log('heyyy')
+  dat = [];
+  var q = `SELECT * FROM nexplex_agriculture_report where user_id="1" order by timestamp desc`;
+  // connection.connect();
+  connection.query(q, function (error, row, fields) {
+    if (error) {
+      console.log(error);
+    }
+    if (row) {
+      console.log(row[0])
+      ipah1=row[0]
+    }
+    ret = JSON.stringify(ipah1)
+    // ret = JSON.stringify(ipah1)
+    res.header('Content-Type', 'application/json; charset=utf-8')
+    res.send(ret)
+  });
 })
 
-app.post('/api/report/report',(req,res)=>{
-  console.log(req.body)
+app.get('/api/report/tkpmPagoh',(req,res)=>{
+  console.log('heyyy')
+  dat = [];
+  var q = `SELECT * FROM nexplex_agriculture_report where user_id="2" order by timestamp desc`;
+  // connection.connect();
+  connection.query(q, function (error, row, fields) {
+    if (error) {
+      console.log(error);
+    }
+    if (row) {
+      console.log(row[0])
+      ipah1=row[0]
+    }
+    ret = JSON.stringify(ipah1)
+    // ret = JSON.stringify(ipah1)
+    res.header('Content-Type', 'application/json; charset=utf-8')
+    res.send(ret)
+  });
 })
 
 // OPEN WEATHER MAP API //
@@ -1045,6 +1124,7 @@ app.get("/api/openWeatherMap/tkpmPagoh", async (req, res) => {
   try {
       const response = await axios.get("https://api.openweathermap.org/data/2.5/forecast?lat=2.1381&lon=102.7395&appid=45a2a23d23c78dbe34c5fbd75a591573&units=metric")
       res.json(response.data)
+      console.log(res)
   }
   catch (err) {
       console.log(err)
