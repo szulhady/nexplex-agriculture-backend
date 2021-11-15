@@ -10,20 +10,18 @@ connection.query(`USE nexplex_agriculture`);
 
 module.exports=function(passport){
 
-  passport.use('web-local',
+passport.use('mobile-local',
     new LocalStrategy(
         {
           usernameField: 'email',
           passwordField: 'password'
         },
-
+        
         async function ( email, password, done) {
-          // console.log(email)
           connection.query(
-            "SELECT * FROM nexplex_agriculture_users WHERE email = ? ",
+            "SELECT * FROM users_nexplex_agriculture_mobile WHERE email = ? ",
             [email],
             function (err, rows) {
-              console.log('here')
               if (err) {
                 return done(err);
               }
@@ -33,7 +31,6 @@ module.exports=function(passport){
               bcrypt.compare(password, rows[0].password, (err, isMatch) => {
                 if (err) throw err;
                 if (isMatch) {
-  
                   return done(null, rows[0]);
                 } else {
                   return done(null, false, { msg: "Password Incorrect" });
@@ -76,16 +73,16 @@ const opts = {};
 
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = 'JWT_SECRET_OR_KEY2';
-passport.use('web-jwt',
+passport.use('mobile-jwt',
     new JwtStrategy(opts, async function(payload, done) {
-      console.log(payload)
-      console.log('jheeeeee')
+      // console.log('heeeee',payload)
       connection.query(
-        "SELECT * FROM nexplex_agriculture_users JOIN nexplex_server on server_id=1 WHERE nexplex_agriculture_users.id = ?",
+        "SELECT * FROM users_nexplex_agriculture_mobile WHERE users_nexplex_agriculture_mobile.user_id = ?",
+        // "SELECT * FROM stations_nexplex_agriculture_mobile RIGHT JOIN users_nexplex_agriculture_mobile ON users_nexplex_agriculture_mobile.station_id=stations_nexplex_agriculture_mobile.id WHERE users_nexplex_agriculture_mobile.id = ?",
         // "SELECT * FROM nexplex_users LEFT JOIN nexplex_topics ON nexplex_users.id=nexplex_topics.userID WHERE nexplex_users.id = ?",
         [payload], (err,results) =>{
           // if(err) console.log(err)
-          console.log(results)
+          // console.log(results)
           // if(results[0].topics){
           //   const topic=[results[0].topics, results[0].topics.slice(0, -4)+'server']
           //   user={
@@ -98,12 +95,12 @@ passport.use('web-jwt',
             // console.log(user)
           // }else{
             user={
-              userId:results[0].id,
+              userId:results[0].user_id,
               username: results[0].username.toUpperCase(),
               // topics:results[0].topics,
               station:[results[0].station],
               scope:[results[0].role],
-              server_mqtt:results[0].server_mqtt
+              station_name:results[0].station_name
             }
           // }
 
