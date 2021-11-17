@@ -95,8 +95,8 @@ const schedule = require('node-schedule');
                  medium = 22
                }
                console.log(`{"D1":${medium},"D2":${durationArray[index]}}`)
-              //  client.publish('filter/np/c/ipah/d', `{"D1":${medium},"D2":${durationArray[index]}}`)
-               client.publish('filter/np/c/ipah/d/debug', `{"D1":${medium},"D2":${durationArray[index]}}`)
+               client.publish('filter/np/c/ipah/d', `{"D1":${medium},"D2":${durationArray[index]}}`)
+              //  client.publish('filter/np/c/ipah/d/debug', `{"D1":${medium},"D2":${durationArray[index]}}`)
               // client.publish('debug/nexplex/control/ipah/sv', `${element}`)
               // client.publish('debug/nexplex/control/ipah/sv', JSON.stringify({'time':`${element}`, 'block':`${sv}`, 'duration':`${durationArray[index]}`,'substance':`${subtanceArray[index]}`}))
             });
