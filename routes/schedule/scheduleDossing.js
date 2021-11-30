@@ -19,7 +19,7 @@ router.get('/api/schedule/ipah1/nutrient',(req,res)=>{
       // console.log(row)
       for (var i = 0; i < row.length; i++) {
         let data2=[]
-        data2.push(`Duration : ${row[i].duration} minutes`)
+        data2.push(`EC value : ${row[i].duration}`)
         let data = {
           date:row[i].date,
           time:row[i].time,
