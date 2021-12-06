@@ -237,7 +237,7 @@ const schedule = require('node-schedule');
                 }else if(substanceArray[index] == 'water' && blockArray[index] ==2){
                   medium =2
                 }else if(substanceArray[index] == 'water' && blockArray[index] ==3){
-                  medium =2
+                  medium =3
                 }else if(substanceArray[index] == 'water' && (blockArray[index]=='1,2' || blockArray[index]=='2,1')){
                   medium = 12
                 }else if(substanceArray[index] == 'water' && (blockArray[index]=='1,3' || blockArray[index]=='3,1')){
