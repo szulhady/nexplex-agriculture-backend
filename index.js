@@ -8,7 +8,8 @@ const passport = require( 'passport' );
 var mqtt = require('mqtt')
 // var client  = mqtt.connect('wss://broker.hivemq.com:8083/mqtt')
 // var client  = mqtt.connect('mqtt://broker.hivemq.com:1883')
-var client  = mqtt.connect('wss://www.txio.live:8083/mqtt')
+var client  = mqtt.connect('ws://www.txio.live:8083/mqtt')
+// var client  = mqtt.connect('wss://www.txio.live:8083/mqtt')
 // var client  = mqtt.connect('wss://www.airmode.live:8083/mqtt')
 // var client  = mqtt.connect('wss://tron.airmode.live:8083/mqtt')
 
