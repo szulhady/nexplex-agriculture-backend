@@ -6,10 +6,23 @@ const connection = require("../../config/database");
 connection.query(`USE nexplex_agriculture`);
 
 router.get("/", (req, res, next) => {
-
-  const table= req.query.table;
-  const station= req.query.station;
-  const sensor = req.query.sensor
+// console.log('herererere')
+  let table= req.query.table;
+  let sensor = req.query.sensor
+console.log(table)
+if(table=="manong_data"){
+  if(sensor==0){
+    sensor= "soilEC_val"
+  }else{
+    sensor="soilPH_val"
+  }
+}else{
+  if(sensor==0){
+    sensor= "soilEC_val"
+  }else{
+    sensor="soilHMD_val"
+  }
+}
 
 // const connection = mysql.createConnection({
 //   host: "zr.airmode.live",
@@ -43,7 +56,7 @@ function date() {
 date();
 
 // var q = `SELECT MIN(soilNPK_val) as minNPK, MAX(soilNPK_val) as maxNPK, AVG(soilNPK_val) as avgNPK, MIN(soilPH_val) as minPH, MAX(soilPH_val) as maxPH, AVG(soilPH_val) as avgPH, MIN(soilEC_val) as minEC, MAX(soilEC_val) as maxEC, AVG(soilEC_val) as avgEC, MIN(soilMS_val) as minMS, MAX(soilMS_val) as maxMS, AVG(soilMS_val) as avgMS, MIN(soilTEMP_val) as minTEMP, MAX(soilTEMP_val) as maxTEMP, AVG(soilTEMP_val) as avgTEMP,timestamp, HOUR(timestamp) AS hour, DATE_FORMAT(timestamp, "%d/%c/%y") AS date FROM ${table} WHERE sid="${station}" && DATE_FORMAT(timestamp, "%e/%c/%Y")="${today}" GROUP BY hour,date ORDER BY hour;`;
-var q = `SELECT MIN(${sensor}) as min, MAX(${sensor}) as max, AVG(${sensor}) as avg,timestamp, HOUR(timestamp) AS hour, DATE_FORMAT(timestamp, "%d/%c/%y") AS date FROM ${table} WHERE tid="${station}" && DATE_FORMAT(timestamp, "%e/%c/%Y")="${today}" GROUP BY hour,date ORDER BY hour;`;
+var q = `SELECT MIN(${sensor}) as min, MAX(${sensor}) as max, AVG(${sensor}) as avg,timestamp, HOUR(timestamp) AS hour, DATE_FORMAT(timestamp, "%d/%c/%y") AS date FROM ${table} WHERE DATE_FORMAT(timestamp, "%e/%c/%Y")="${today}" GROUP BY hour,date ORDER BY hour;`;
 
 let dat
 // let dat=[]
@@ -63,14 +76,14 @@ connection.query(q, function (error, row, fields) {
       if (row[i].hour < 10) {
         row[i].hour = "0" + row[i].hour;
       }
-      if(row[i].hour%4 == 0){
+      // if(row[i].hour%4 == 0){
 
 
       min.push(row[i].min)
       max.push(row[i].max)
       avg.push(row[i].avg)
       time.push(row[i].hour)
-    }
+    // }
       // dat.push({
       //   min: row[i].min.toFixed(2),
       //   max: row[i].max.toFixed(2),
