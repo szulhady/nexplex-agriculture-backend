@@ -2,9 +2,9 @@ const express = require('express')
 const router = express.Router()
 const connection = require("../../config/database");
 
-// var mqtt = require('mqtt')
-// var client  = mqtt.connect('wss://www.airmode.live:8083/mqtt')
-
+var mqtt = require('mqtt')
+var client  = mqtt.connect('wss://192.168.0.108:8083/mqtt')
+let timeIpahArrayLength=0
 // GET
 // NUTREINT PREPARATION //
 router.get('/api/dailySchedule/ipah1',(req,res)=>{
@@ -23,13 +23,30 @@ router.get('/api/dailySchedule/ipah1',(req,res)=>{
         let durationArray  = row[i].duration.split(',')
         let substanceArray = row[i].substance.split(',')
         
-        // timeArray.forEach((element,index) => {
-        //   jobIpah = schedule.scheduleJob(`ipah${index}`,row[i].date  +" "+  element+":00", function(){
-        //     console.log('Ipah Schedule.',new Date(), blockArray[index], durationArray[index], substanceArray[index]);
-             
-        //   });
+        timeArray.forEach((element,index) => {
+          jobIpah = schedule.scheduleJob(`ipah${index}`,row[i].date  +" "+  element+":00", function(){
+            console.log('Ipah Schedule.',new Date(), blockArray[index], durationArray[index], substanceArray[index]);
+            let medium
+            if (substanceArray[index] == 'water' && blockArray[index] ==1){
+             medium = 1
+            }else if(substanceArray[index] == 'water' && blockArray[index] ==2){
+              medium =2
+            }else if(substanceArray[index] == 'water' && (blockArray[index]=='All')){
+              medium = 11
+            }
+            
+            if (substanceArray[index] == 'fertilizer' && blockArray[index] ==1){
+              medium = 3
+             }else if(substanceArray[index] == 'fertilizer' && blockArray[index] ==2){
+               medium =4
+             }else if(substanceArray[index] == 'fertilizer' && (blockArray[index]=='All')){
+               medium = 22
+             }
+             console.log(`{"D1":${medium},"D2":${durationArray[index]}}`)
+             client.publish('filter/np/c/ipah/d', `{"D1":${medium},"D2":${durationArray[index]}}`)
+          });
 
-        // });
+        });
         console.log(timeArray)
         console.log(blockArray)
         console.log(durationArray)
