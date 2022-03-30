@@ -3,7 +3,7 @@ const router = express.Router()
 const connection = require("../../config/database");
 
 var mqtt = require('mqtt')
-var client  = mqtt.connect('wss://192.168.0.108:8083/mqtt')
+var client  = mqtt.connect('192.168.0.108:1883')
 let timeIpahArrayLength=0
 // GET
 // NUTREINT PREPARATION //
