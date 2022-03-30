@@ -8,7 +8,7 @@ const passport = require( 'passport' );
 var mqtt = require('mqtt')
 // var client  = mqtt.connect('wss://broker.hivemq.com:8083/mqtt')
 // var client  = mqtt.connect('mqtt://broker.hivemq.com:1883')
-var client  = mqtt.connect('ws://www.txio.live:8083/mqtt')
+var client  = mqtt.connect('wss://www.txio.live:8083/mqtt')
 // var client  = mqtt.connect('wss://www.txio.live:8083/mqtt')
 // var client  = mqtt.connect('wss://www.airmode.live:8083/mqtt')
 // var client  = mqtt.connect('wss://tron.airmode.live:8083/mqtt')
@@ -1213,7 +1213,6 @@ client.on('connect', function () {
   })
 })
 
-
 client.on('message', function (topic, message) {
   // message is Buffer
   if(topic === 'debug/test/database/ipah1'){
@@ -1254,6 +1253,7 @@ app.use("/api/user/mobile", require("./routes/user/userMobile"))
 // app.use("/api/admin", require("./routes/admin"))
 
 // API FOR SCHEDULE MOBILE
+app.use("/", require("./routes/schedule/dailySchedule"))
 app.use("/", require("./routes/schedule/scheduleDripping"))
 app.use("/", require("./routes/schedule/scheduleDossing"))
 
