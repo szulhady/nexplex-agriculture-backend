@@ -8,7 +8,7 @@ const passport = require( 'passport' );
 var mqtt = require('mqtt')
 // var client  = mqtt.connect('wss://broker.hivemq.com:8083/mqtt')
 // var client  = mqtt.connect('mqtt://broker.hivemq.com:1883')
-var client  = mqtt.connect('wss://www.txio.live:8083/mqtt')
+var client  = mqtt.connect('ws://www.txio.live:8083/mqtt')
 // var client  = mqtt.connect('wss://www.txio.live:8083/mqtt')
 // var client  = mqtt.connect('wss://www.airmode.live:8083/mqtt')
 // var client  = mqtt.connect('wss://tron.airmode.live:8083/mqtt')
@@ -1098,7 +1098,6 @@ function getUpdatedDataKuantanNutrient(){
 // // // // // //
 
 app.get('/', (req, res) => {
-  client.publish('debug/test/express','Hello World From Express!')
   res.send(new Date().toLocaleTimeString())
 })
 
@@ -1303,6 +1302,35 @@ getUpdatedDataKertih2Nutrient()
 getUpdatedDataKuantanNutrient()
 },6000)
 
-app.post("/try/react",(req,res)=>{
-  console.log(req.body.params)
+
+const mysqldump = require('mysqldump')
+
+app.post("/copyTable", async (req,res)=>{
+  // console.log(req.body.table)
+  const result = await mysqldump({
+  //   connection: {
+  // host: "zr.airmode.live",
+  // user: "root",
+  // password: "c1vG7R34",
+  // database: "nexplex_agriculture",
+  // port: 3306,
+  //   },
+    connection: {
+      host: "157.245.49.210",
+      user: "digitalman",
+      password: "c1vG7R34",
+      database: "nexplex_agriculture",
+    },
+    dump:{
+      tables:[req.body.table],
+      schema:{
+        table: {
+          ifNotExist: true,
+          dropIfExist: true,
+          charset: true,
+        },
+      }
+    }
+  });
+res.send(result)
 })

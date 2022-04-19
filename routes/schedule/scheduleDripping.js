@@ -3,7 +3,7 @@ const router = express.Router()
 const connection = require("../../config/database");
 
 var mqtt = require('mqtt')
-var client  = mqtt.connect('wss://www.airmode.live:8083/mqtt')
+var client  = mqtt.connect('ws://www.txio.live:8083/mqtt')
 
 
 // GET //
@@ -890,6 +890,7 @@ router.post('/api/setSchedule/kuantan',(req,res)=>{
         }
         if (row) {
           status = 'Success'
+          client.publish("np/kuantan/table/dripping","Table kuantan schedule updated")
         //  console.log(row)
         }
       //   client.publish('debug/test/database/ipah1', 'updated')

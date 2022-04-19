@@ -3,7 +3,7 @@ const router = express.Router()
 const connection = require("../../config/database");
 
 var mqtt = require('mqtt')
-var client  = mqtt.connect('wss://www.airmode.live:8083/mqtt')
+var client  = mqtt.connect('ws://www.txio.live:8083/mqtt')
 
 // GET
 // NUTREINT PREPARATION //
@@ -721,8 +721,6 @@ router.post('/api/setSchedule/kertih2/nutrient',(req,res)=>{
 }) 
 
 router.post('/api/setSchedule/kuantan/nutrient',(req,res)=>{
-  // console.log(req.body.date)
-      // ret = JSON.stringify(ipah1)
       let dateArray = req.body.params.date
       let ec = req.body.params.ec
 
@@ -744,8 +742,9 @@ router.post('/api/setSchedule/kuantan/nutrient',(req,res)=>{
           status = error.sqlMessage
         }
         if (row) {
-          console.log('post manong nutrient success')
+          // console.log('post manong nutrient success')
           status = 'Success'
+          client.publish("np/kuantan/table/dosing","Table kuantan nutrient schedule updated")
         //  console.log(row)
         }
         // client.publish('debug/test/database/kongPo', 'updated')
