@@ -744,7 +744,7 @@ router.post('/api/setSchedule/kuantan/nutrient',(req,res)=>{
         if (row) {
           // console.log('post manong nutrient success')
           status = 'Success'
-          client.publish("np/kuantan/table/dosing","Table kuantan nutrient schedule updated")
+          client.publish("np/7hq7/table/dosing","Table kuantan nutrient schedule updated")
         //  console.log(row)
         }
         // client.publish('debug/test/database/kongPo', 'updated')

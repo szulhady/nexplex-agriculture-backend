@@ -890,7 +890,7 @@ router.post('/api/setSchedule/kuantan',(req,res)=>{
         }
         if (row) {
           status = 'Success'
-          client.publish("np/kuantan/table/dripping","Table kuantan schedule updated")
+          client.publish("np/7hq7/table/dripping","Table kuantan schedule updated")
         //  console.log(row)
         }
       //   client.publish('debug/test/database/ipah1', 'updated')
