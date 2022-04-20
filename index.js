@@ -1308,19 +1308,19 @@ const mysqldump = require('mysqldump')
 app.post("/copyTable", async (req,res)=>{
   // console.log(req.body.table)
   const result = await mysqldump({
+  //   connection: {
+  // host: "zr.airmode.live",
+  // user: "root",
+  // password: "c1vG7R34",
+  // database: "nexplex_agriculture",
+  // port: 3306,
+  //   },
     connection: {
-  host: "zr.airmode.live",
-  user: "root",
-  password: "c1vG7R34",
-  database: "nexplex_agriculture",
-  port: 3306,
+      host: "157.245.49.210",
+      user: "digitalman",
+      password: "c1vG7R34",
+      database: "nexplex_agriculture",
     },
-    // connection: {
-    //   host: "157.245.49.210",
-    //   user: "digitalman",
-    //   password: "c1vG7R34",
-    //   database: "nexplex_agriculture",
-    // },
     dump:{
       tables:[req.body.table],
       schema:{
