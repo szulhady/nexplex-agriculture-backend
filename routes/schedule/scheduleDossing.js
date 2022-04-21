@@ -958,6 +958,7 @@ router.delete('/api/schedule/kuantan/nutrient',(req,res)=>{
       console.log(error);
     }
     if (row) {
+      client.publish("np/7hq7/table/dosing","Table kuantan nutrient schedule updated")
       res.json('deleted')
     }
   });

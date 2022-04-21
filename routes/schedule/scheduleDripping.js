@@ -1104,6 +1104,7 @@ router.delete('/api/schedule/kuantan',(req,res)=>{
     console.log(error);
   }
   if (row) {
+    client.publish("np/7hq7/table/dripping","Table kuantan schedule updated")
     res.json('deleted')
   
   }
