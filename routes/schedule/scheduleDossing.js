@@ -674,7 +674,8 @@ router.post('/api/setSchedule/kertih1/nutrient',(req,res)=>{
           status = error.sqlMessage
         }
         if (row) {
-          console.log('post manong nutrient success')
+          // console.log('post manong nutrient success')
+          client.publish("np/7hq5/table/dosing","Table kertih1 nutrient schedule updated")
           status = 'Success'
         //  console.log(row)
         }
@@ -709,7 +710,8 @@ router.post('/api/setSchedule/kertih2/nutrient',(req,res)=>{
           status = error.sqlMessage
         }
         if (row) {
-          console.log('post manong nutrient success')
+          // console.log('post manong nutrient success')
+          client.publish("np/7hq6/table/dosing","Table kertih2 nutrient schedule updated")
           status = 'Success'
         //  console.log(row)
         }
@@ -930,6 +932,7 @@ router.delete('/api/schedule/kertih1/nutrient',(req,res)=>{
       console.log(error);
     }
     if (row) {
+      client.publish("np/7hq5/table/dosing","Table kertih1 nutrient schedule updated")
       res.json('deleted')
     }
   });
@@ -944,6 +947,7 @@ router.delete('/api/schedule/kertih2/nutrient',(req,res)=>{
       console.log(error);
     }
     if (row) {
+      client.publish("np/7hq6/table/dosing","Table kertih2 nutrient schedule updated")
       res.json('deleted')
     }
   });

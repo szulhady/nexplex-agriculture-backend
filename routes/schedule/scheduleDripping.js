@@ -817,6 +817,7 @@ router.post('/api/setSchedule/kertih1',(req,res)=>{
           status = error.sqlMessage
         }
         if (row) {
+          client.publish("np/7hq5/table/dripping","Table kertih1 schedule updated")
           status = 'Success'
         //  console.log(row)
         }
@@ -853,6 +854,7 @@ router.post('/api/setSchedule/kertih2',(req,res)=>{
           status = error.sqlMessage
         }
         if (row) {
+          client.publish("np/7hq6/table/dripping","Table kertih2 schedule updated")
           status = 'Success'
         //  console.log(row)
         }
@@ -1074,6 +1076,7 @@ router.delete('/api/schedule/kertih1',(req,res)=>{
     console.log(error);
   }
   if (row) {
+    client.publish("np/7hq5/table/dripping","Table kertih1 schedule updated")
     res.json('deleted')
   
   }
@@ -1089,6 +1092,7 @@ router.delete('/api/schedule/kertih2',(req,res)=>{
     console.log(error);
   }
   if (row) {
+    client.publish("np/7hq6/table/dripping","Table kertih2 schedule updated")
     res.json('deleted')
   
   }
