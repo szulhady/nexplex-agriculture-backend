@@ -1309,20 +1309,29 @@ app.post("/copyTable", async (req,res)=>{
   // console.log(req.body.table)
   const result = await mysqldump({
   //   connection: {
-  // host: "zr.airmode.live",
+  // host: "localhost",
   // user: "root",
-  // password: "c1vG7R34",
-  // database: "nexplex_agriculture",
+  // password: "password",
+  // database: "mbsa",
   // port: 3306,
   //   },
     connection: {
-      host: "157.245.49.210",
-      user: "digitalman",
-      password: "c1vG7R34",
-      database: "nexplex_agriculture",
+  host: "zr.airmode.live",
+  user: "root",
+  password: "c1vG7R34",
+  database: "nexplex_agriculture",
+  port: 3306,
     },
+    // connection: {
+    //   host: "157.245.49.210",
+    //   user: "digitalman",
+    //   password: "c1vG7R34",
+    //   database: "nexplex_agriculture",
+    // },
     dump:{
+      // tables:["building_desc"],
       tables:[req.body.table],
+      // tables:["users_nexplex_agriculture_mobile"],
       schema:{
         table: {
           ifNotExist: true,

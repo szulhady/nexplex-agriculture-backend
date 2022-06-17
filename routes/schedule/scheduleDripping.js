@@ -638,6 +638,7 @@ router.post('/api/setSchedule/manong',(req,res)=>{
           }
           if (row) {
             status = 'Success'
+            client.publish("np/manong/table/dripping","Table manong schedule updated")
           //  console.log(row)
           }
         //   client.publish('debug/test/database/ipah1', 'updated')
@@ -674,6 +675,7 @@ router.post('/api/setSchedule/kelantan1',(req,res)=>{
         }
         if (row) {
           status = 'Success'
+          client.publish("np/7hq1/table/dripping","Table kelantan1 schedule updated")
         //  console.log(row)
         }
       //   client.publish('debug/test/database/ipah1', 'updated')
@@ -710,6 +712,7 @@ router.post('/api/setSchedule/kelantan2',(req,res)=>{
         }
         if (row) {
           status = 'Success'
+          client.publish("np/7hq2/table/dripping","Table kelantan2 schedule updated")
         //  console.log(row)
         }
       //   client.publish('debug/test/database/ipah1', 'updated')
@@ -746,6 +749,7 @@ router.post('/api/setSchedule/terengganu1',(req,res)=>{
         }
         if (row) {
           status = 'Success'
+          client.publish("np/7hq3/table/dripping","Table terengganu1 schedule updated")
         //  console.log(row)
         }
       //   client.publish('debug/test/database/ipah1', 'updated')
@@ -782,6 +786,7 @@ router.post('/api/setSchedule/terengganu2',(req,res)=>{
         }
         if (row) {
           status = 'Success'
+          client.publish("np/7hq4/table/dripping","Table terengganu2 schedule updated")
         //  console.log(row)
         }
       //   client.publish('debug/test/database/ipah1', 'updated')
@@ -817,8 +822,8 @@ router.post('/api/setSchedule/kertih1',(req,res)=>{
           status = error.sqlMessage
         }
         if (row) {
-          client.publish("np/7hq5/table/dripping","Table kertih1 schedule updated")
           status = 'Success'
+          client.publish("np/7hq5/table/dripping","Table kertih1 schedule updated")
         //  console.log(row)
         }
       //   client.publish('debug/test/database/ipah1', 'updated')
@@ -1002,6 +1007,7 @@ if (error) {
 }
 if (row) {
   res.json('deleted')
+  client.publish("np/manong/table/dripping","Table manong schedule updated")
 
 }
 });
@@ -1017,7 +1023,7 @@ router.delete('/api/schedule/kelantan1',(req,res)=>{
   }
   if (row) {
     res.json('deleted')
-  
+    client.publish("np/7hq1/table/dripping","Table kelantan1 schedule updated")
   }
   });
 })
@@ -1032,7 +1038,7 @@ router.delete('/api/schedule/kelantan2',(req,res)=>{
   }
   if (row) {
     res.json('deleted')
-  
+    client.publish("np/7hq2/table/dripping","Table kelantan2 schedule updated")
   }
   });
 })
@@ -1047,7 +1053,7 @@ router.delete('/api/schedule/terengganu1',(req,res)=>{
   }
   if (row) {
     res.json('deleted')
-  
+    client.publish("np/7hq3/table/dripping","Table terengganu1 schedule updated")
   }
   });
 })
@@ -1062,7 +1068,7 @@ router.delete('/api/schedule/terengganu2',(req,res)=>{
   }
   if (row) {
     res.json('deleted')
-  
+    client.publish("np/7hq4/table/dripping","Table terengganu2 schedule updated")
   }
   });
 })
@@ -1076,9 +1082,8 @@ router.delete('/api/schedule/kertih1',(req,res)=>{
     console.log(error);
   }
   if (row) {
-    client.publish("np/7hq5/table/dripping","Table kertih1 schedule updated")
     res.json('deleted')
-  
+    client.publish("np/7hq5/table/dripping","Table kertih1 schedule updated")
   }
   });
 })

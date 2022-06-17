@@ -499,8 +499,9 @@ router.post('/api/setSchedule/manong/nutrient',(req,res)=>{
           status = error.sqlMessage
         }
         if (row) {
-          console.log('post manong nutrient success')
+          // console.log('post manong nutrient success')
           status = 'Success'
+          client.publish("np/manong/table/dosing","Table manong nutrient schedule updated")
         //  console.log(row)
         }
         // client.publish('debug/test/database/kongPo', 'updated')
@@ -534,9 +535,10 @@ router.post('/api/setSchedule/kelantan1/nutrient',(req,res)=>{
           status = error.sqlMessage
         }
         if (row) {
-          console.log('post manong nutrient success')
+          // console.log('post manong nutrient success')
           status = 'Success'
         //  console.log(row)
+        client.publish("np/7hq1/table/dosing","Table kelantan1 nutrient schedule updated")
         }
         // client.publish('debug/test/database/kongPo', 'updated')
         res.header('Content-Type', 'application/json; charset=utf-8')
@@ -569,8 +571,9 @@ router.post('/api/setSchedule/kelantan2/nutrient',(req,res)=>{
           status = error.sqlMessage
         }
         if (row) {
-          console.log('post manong nutrient success')
+          // console.log('post manong nutrient success')
           status = 'Success'
+          client.publish("np/7hq2/table/dosing","Table kelantan2 nutrient schedule updated")
         //  console.log(row)
         }
         // client.publish('debug/test/database/kongPo', 'updated')
@@ -604,8 +607,9 @@ router.post('/api/setSchedule/terengganu1/nutrient',(req,res)=>{
           status = error.sqlMessage
         }
         if (row) {
-          console.log('post manong nutrient success')
+          // console.log('post manong nutrient success')
           status = 'Success'
+          client.publish("np/7hq3/table/dosing","Table terengganu1 nutrient schedule updated")
         //  console.log(row)
         }
         // client.publish('debug/test/database/kongPo', 'updated')
@@ -639,8 +643,9 @@ router.post('/api/setSchedule/terengganu2/nutrient',(req,res)=>{
           status = error.sqlMessage
         }
         if (row) {
-          console.log('post manong nutrient success')
+          // console.log('post manong nutrient success')
           status = 'Success'
+          client.publish("np/7hq4/table/dosing","Table terengganu2 nutrient schedule updated")
         //  console.log(row)
         }
         // client.publish('debug/test/database/kongPo', 'updated')
@@ -674,9 +679,9 @@ router.post('/api/setSchedule/kertih1/nutrient',(req,res)=>{
           status = error.sqlMessage
         }
         if (row) {
-          // console.log('post manong nutrient success')
-          client.publish("np/7hq5/table/dosing","Table kertih1 nutrient schedule updated")
+          console.log('post manong nutrient success')
           status = 'Success'
+          client.publish("np/7hq5/table/dosing","Table kertih1 nutrient schedule updated")
         //  console.log(row)
         }
         // client.publish('debug/test/database/kongPo', 'updated')
@@ -862,6 +867,7 @@ router.delete('/api/schedule/manong/nutrient',(req,res)=>{
       console.log(error);
     }
     if (row) {
+      client.publish("np/manong/table/dosing","Table manong nutrient schedule updated")
       res.json('deleted')
     }
   });
@@ -876,6 +882,7 @@ router.delete('/api/schedule/kelantan1/nutrient',(req,res)=>{
       console.log(error);
     }
     if (row) {
+      client.publish("np/7hq1/table/dosing","Table kelantan1 nutrient schedule updated")
       res.json('deleted')
     }
   });
@@ -890,6 +897,7 @@ router.delete('/api/schedule/kelantan2/nutrient',(req,res)=>{
       console.log(error);
     }
     if (row) {
+      client.publish("np/7hq2/table/dosing","Table kelantan2 nutrient schedule updated")
       res.json('deleted')
     }
   });
@@ -904,6 +912,7 @@ router.delete('/api/schedule/terengganu1/nutrient',(req,res)=>{
       console.log(error);
     }
     if (row) {
+      client.publish("np/7hq3/table/dosing","Table terengganu1 nutrient schedule updated")
       res.json('deleted')
     }
   });
@@ -918,6 +927,7 @@ router.delete('/api/schedule/terengganu2/nutrient',(req,res)=>{
       console.log(error);
     }
     if (row) {
+      client.publish("np/7hq4/table/dosing","Table terengganu2 nutrient schedule updated")
       res.json('deleted')
     }
   });
