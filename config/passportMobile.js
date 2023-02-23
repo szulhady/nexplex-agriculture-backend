@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 
 const connection = require("./database");
 
-connection.query(`USE nexplex_agriculture`);
+// connection.query(`USE nexplex_agriculture`);
 
 module.exports=function(passport){
 

@@ -4,7 +4,7 @@ const mysql = require("mysql");
 //   host: "localhost",
 //   user: "root",
 //   password: "password",
-//   database: "nexplex_agriculture",
+//   database: "nexplex_agriculture_debug",
 //   port: 3306,
 // });
 // const connection = mysql.createPool ({

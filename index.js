@@ -8,11 +8,12 @@ const passport = require( 'passport' );
 var mqtt = require('mqtt')
 // var client  = mqtt.connect('wss://broker.hivemq.com:8083/mqtt')
 // var client  = mqtt.connect('mqtt://broker.hivemq.com:1883')
-var client  = mqtt.connect('wss://www.txio.live:8083/mqtt')
+// var client  = mqtt.connect('ws://www.txio.live:8083/mqtt')
 // var client  = mqtt.connect('wss://www.txio.live:8083/mqtt')
 // var client  = mqtt.connect('wss://www.airmode.live:8083/mqtt')
 // var client  = mqtt.connect('wss://tron.airmode.live:8083/mqtt')
-
+var client  = mqtt.connect('wss://www.txio.live:8083/mqtt')
+// client.publish('test3','dapat')
 const schedule = require('node-schedule');
 
 
@@ -180,7 +181,7 @@ const schedule = require('node-schedule');
                }
                console.log(`{"D1":${medium},"D2":${durationArray[index]}}`)
               //  client.publish('2filter/np/c/tkpmIpah/d', `{"D1":${medium},"D2":${durationArray[index]}}`)
-               client.publish('filter/np/c/tkpmIpah/d', `{"D1":${medium},"D2":${durationArray[index]}}`)
+              //  client.publish('filter/np/c/tkpmIpah/d', `{"D1":${medium},"D2":${durationArray[index]}}`)
               // nexplex/control/tkpmIpah/dripping
               // client.publish('debug/nexplex/control/tkpm/sv', JSON.stringify({time:`${element}`, block:`${sv}`, duration:`${durationArray[index]}`,'substance':`${subtanceArray[index]}`}))
             });
@@ -1217,7 +1218,7 @@ client.on('message', function (topic, message) {
   if(topic === 'debug/test/database/ipah1'){
     // console.log(message.toString())
     if(message.toString()==='updated'){
-      getUpdatedDataIpah()
+      // getUpdatedDataIpah()
     }
   }
   if(topic === 'debug/test/database/ipah2'){
@@ -1275,31 +1276,31 @@ setInterval(()=>{
 
 // DRIPING WATER/NUTRIENT
 getUpdatedDataIpah()
-getUpdatedDataTkpmIpah()
-getUpdatedDataTkpmPagoh()
-getUpdatedDataKongPo()
-getUpdatedDataManong()
-getUpdatedDataKelantan1()
-getUpdatedDataKelantan2()
-getUpdatedDataTerengganu1()
-getUpdatedDataTerengganu2()
-getUpdatedDataKertih1()
-getUpdatedDataKertih2()
-getUpdatedDataKuantan()
+// getUpdatedDataTkpmIpah()
+// getUpdatedDataTkpmPagoh()
+// getUpdatedDataKongPo()
+// getUpdatedDataManong()
+// getUpdatedDataKelantan1()
+// getUpdatedDataKelantan2()
+// getUpdatedDataTerengganu1()
+// getUpdatedDataTerengganu2()
+// getUpdatedDataKertih1()
+// getUpdatedDataKertih2()
+// getUpdatedDataKuantan()
 
 // NUTRIENT PREPARATION
 getUpdatedDataIpahNutrient()
-getUpdatedDataTkpmIpahNutrient()
-getUpdatedDataTkpmPagohNutrient()
-getUpdatedDataKongPoNutrient()
-getUpdatedDataManongNutrient()
-getUpdatedDataKelantan1Nutrient()
-getUpdatedDataKelantan2Nutrient()
-getUpdatedDataTerengganu1Nutrient()
-getUpdatedDataTerengganu2Nutrient()
-getUpdatedDataKertih1Nutrient()
-getUpdatedDataKertih2Nutrient()
-getUpdatedDataKuantanNutrient()
+// getUpdatedDataTkpmIpahNutrient()
+// getUpdatedDataTkpmPagohNutrient()
+// getUpdatedDataKongPoNutrient()
+// getUpdatedDataManongNutrient()
+// getUpdatedDataKelantan1Nutrient()
+// getUpdatedDataKelantan2Nutrient()
+// getUpdatedDataTerengganu1Nutrient()
+// getUpdatedDataTerengganu2Nutrient()
+// getUpdatedDataKertih1Nutrient()
+// getUpdatedDataKertih2Nutrient()
+// getUpdatedDataKuantanNutrient()
 },6000)
 
 
@@ -1307,6 +1308,7 @@ const mysqldump = require('mysqldump')
 
 app.post("/copyTable", async (req,res)=>{
   // console.log(req.body.table)
+  let tableReq = req.body.table
   const result = await mysqldump({
   //   connection: {
   // host: "localhost",
@@ -1338,8 +1340,51 @@ app.post("/copyTable", async (req,res)=>{
           dropIfExist: true,
           charset: true,
         },
+      },
+      data:{
+        maxRowsPerInsertStatement:2,
+        where:{
+          [`${tableReq}`]:"date=CURDATE()"
+        }
       }
-    }
+    },
   });
 res.send(result)
+})
+// client.publish('filter/np/c/tkpmIpah/n/s', `{"D1":1,"D2":2}`)
+// client.publish('np/c/tkpmIpah/wf', `10`)
+
+// setInterval(() => {
+//   client.publish('filter/np/c/tkpmIpah/n/s', `{"D1":1,"D2":2}`)
+// }, 1000);
+
+const Json2csvParser = require("json2csv").Parser;
+
+app.get("/api/download", (req,res)=>{
+  // let {}= req.body
+  console.log(req.body)
+  var q = `SELECT * FROM nexplex_agriculture_report where user_id="0" order by timestamp desc`;
+  // connection.connect();
+  connection.query(q, function (error, row, fields) {
+    if (error) {
+      console.log(error);
+    }
+    if (row.length>0) {
+      const jsonData = row;
+      const json2csvParser = new Json2csvParser({ header: true});
+      const csv = json2csvParser.parse(jsonData);
+      var path='./'+Date.now()+'.csv'; 
+      // fs.writeFile(path, csv, function(error) {
+        // if (error) throw error;
+        // console.log(path);
+        res.send(csv);
+      // });
+    }else{
+      res.send({msg:"There is no data"});
+    }
+    // ret = JSON.stringify(ipah1)
+    // ret = JSON.stringify(ipah1)
+    // res.header('Content-Type', 'application/json; charset=utf-8')
+    // res.send(ret)
+  });
 })

@@ -5,6 +5,25 @@ const connection = require("../../config/database");
 var mqtt = require('mqtt')
 var client  = mqtt.connect('ws://www.txio.live:8083/mqtt')
 
+const mysql = require("mysql");
+
+
+// const connection = mysql.createPool ({
+//   host: "192.168.0.148",
+//   user: "root",
+//   password: "c1vG7R34",
+//   database: "nexplex_agriculture",
+//   port: 3306,
+// });
+
+// const connection = mysql.createPool ({
+//   host: "157.245.49.210",
+//   user: "digitalman",
+//   password: "c1vG7R34",
+//   database: "nexplex_agriculture",
+//   port: 3306,
+// });
+
 // GET
 // NUTREINT PREPARATION //
 router.get('/api/schedule/ipah1/nutrient',(req,res)=>{
@@ -49,7 +68,7 @@ router.get('/api/schedule/ipah2/nutrient',(req,res)=>{
 
       for (var i = 0; i < row.length; i++) {
         let data2=[]
-        data2.push(`Duration : ${row[i].duration} minutes`)
+        data2.push(`Tank : ${row[i].tank}, Volume : ${row[i].volume} Litre`)
         let data = {
           date:row[i].date,
           time:row[i].time,
@@ -393,18 +412,25 @@ router.post('/api/setSchedule/ipah1/nutrient',(req,res)=>{
 
 router.post('/api/setSchedule/ipah2/nutrient',(req,res)=>{
   let dateArray = req.body.date
-  let duration = req.body.duration
+  let volume = req.body.volume
+  let time = req.body.time
+  let tank = req.body.tank
+  // console.log('ec',ec)
+  // let duration = req.body.duration
   let status=''
 
   let stringMysql = ''
   dateArray.forEach((date, index, array)=>{
     if(index === array.length - 1){
-      stringMysql =stringMysql + `('${date}','03:00:00', '${duration}')`
+      stringMysql =stringMysql + `('${date}','09:52:00', '${tank}', ${volume})`
+      // stringMysql =stringMysql + `('${date}','03:00:00', '${tank}', ${volume})`
     }else{
-      stringMysql =stringMysql + `('${date}','03:00:00', '${duration}'),`
+      stringMysql =stringMysql + `('${date}','09:52:00', '${tank}', ${volume}),`
+      // stringMysql =stringMysql + `('${date}','03:00:00', '${tank}', ${volume}),`
     }
   })
-      var q = `INSERT INTO tkpmipah_nutrient_schedule (date,time,duration) VALUES ${stringMysql}`;
+  console.log(stringMysql)
+      var q = `INSERT INTO tkpmipah_nutrient_schedule (date,time,tank,volume) VALUES ${stringMysql}`;
       connection.query(q, function (error, row, fields) {
         if (error) {
           status = error.sqlMessage

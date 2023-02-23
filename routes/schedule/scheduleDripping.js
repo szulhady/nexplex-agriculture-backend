@@ -5,6 +5,16 @@ const connection = require("../../config/database");
 var mqtt = require('mqtt')
 var client  = mqtt.connect('ws://www.txio.live:8083/mqtt')
 
+const mysql = require("mysql");
+
+
+// const connection = mysql.createPool ({
+//   host: "192.168.0.148",
+//   user: "root",
+//   password: "c1vG7R34",
+//   database: "nexplex_agriculture",
+//   port: 3306,
+// });
 
 // GET //
 // // DRIPPING WATER/NUTRIENT //

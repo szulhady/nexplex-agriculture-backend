@@ -4,7 +4,7 @@ const router = express.Router();
 // const connection = require("../../config/database");
 const connection = require("../../config/database");
 
-connection.query(`USE nexplex_agriculture`);
+// connection.query(`USE nexplex_agriculture`);
 router.get("/", (req, res, next) => {
   const table= req.query.table;
   const station= req.query.station;
