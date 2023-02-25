@@ -1344,7 +1344,7 @@ app.post("/copyTable", async (req,res)=>{
       data:{
         maxRowsPerInsertStatement:2,
         where:{
-          [`${tableReq}`]:"date=CURDATE()"
+          [`${tableReq}`]:"date>=CURDATE()"
         }
       }
     },
