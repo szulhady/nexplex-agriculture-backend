@@ -385,7 +385,7 @@ router.post('/api/setSchedule/ipah1/nutrient',(req,res)=>{
     // ret = JSON.stringify(ipah1)
     // let dateArray = req.body.date
     // let duration = req.body.duration
-    // let status=''
+    let status=''
 
     let dateArray = req.body.date
     let volume = req.body.volume
@@ -400,14 +400,16 @@ router.post('/api/setSchedule/ipah1/nutrient',(req,res)=>{
         stringMysql =stringMysql + `('${date}','03:00:00', '${volume}'),`
       }
     })
-
+console.log(stringMysql)
     var q = `INSERT INTO ipah_nutrient_schedule (date,time,volume) VALUES ${stringMysql}`;
     connection.query(q, function (error, row, fields) {
       if (error) {
         status = error.sqlMessage
+        console.log(error)
       }
       if (row) {
       status = 'Success'
+      console.log(row)
       }
       // client.publish('debug/test/database/ipah1', 'updated')
       res.header('Content-Type', 'application/json; charset=utf-8')
