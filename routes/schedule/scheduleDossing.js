@@ -38,7 +38,8 @@ router.get('/api/schedule/ipah1/nutrient',(req,res)=>{
       // console.log(row)
       for (var i = 0; i < row.length; i++) {
         let data2=[]
-        data2.push(`EC value : ${row[i].duration}`)
+        // data2.push(`EC value : ${row[i].duration}`)
+        data2.push(`Volume : ${row[i].volume} Litre`)
         let data = {
           date:row[i].date,
           time:row[i].time,
@@ -382,20 +383,25 @@ router.get('/api/schedule/kuantan/nutrient',(req,res)=>{
 router.post('/api/setSchedule/ipah1/nutrient',(req,res)=>{
 // console.log(req.body.block)
     // ret = JSON.stringify(ipah1)
+    // let dateArray = req.body.date
+    // let duration = req.body.duration
+    // let status=''
+
     let dateArray = req.body.date
-    let duration = req.body.duration
-    let status=''
+    let volume = req.body.volume
+    let time = req.body.time
+  
 
     let stringMysql = ''
     dateArray.forEach((date, index, array)=>{
       if(index === array.length - 1){
-        stringMysql =stringMysql + `('${date}','03:00:00', '${duration}')`
+        stringMysql =stringMysql + `('${date}','03:00:00', '${volume}')`
       }else{
-        stringMysql =stringMysql + `('${date}','03:00:00', '${duration}'),`
+        stringMysql =stringMysql + `('${date}','03:00:00', '${volume}'),`
       }
     })
 
-    var q = `INSERT INTO ipah_nutrient_schedule (date,time,duration) VALUES ${stringMysql}`;
+    var q = `INSERT INTO ipah_nutrient_schedule (date,time,volume) VALUES ${stringMysql}`;
     connection.query(q, function (error, row, fields) {
       if (error) {
         status = error.sqlMessage
@@ -422,10 +428,10 @@ router.post('/api/setSchedule/ipah2/nutrient',(req,res)=>{
   let stringMysql = ''
   dateArray.forEach((date, index, array)=>{
     if(index === array.length - 1){
-      stringMysql =stringMysql + `('${date}','09:52:00', '${tank}', ${volume})`
+      stringMysql =stringMysql + `('${date}','03:00:00', '${tank}', ${volume})`
       // stringMysql =stringMysql + `('${date}','03:00:00', '${tank}', ${volume})`
     }else{
-      stringMysql =stringMysql + `('${date}','09:52:00', '${tank}', ${volume}),`
+      stringMysql =stringMysql + `('${date}','03:00:00', '${tank}', ${volume}),`
       // stringMysql =stringMysql + `('${date}','03:00:00', '${tank}', ${volume}),`
     }
   })
